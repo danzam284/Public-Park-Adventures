@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import Datastore from "@seald-io/nedb";
+import axios from "axios";
 
 const app = express();
 app.use(cors());
@@ -50,6 +51,22 @@ app.post("/newUser", async (req, _) => {
         createUser(req.body.id, req.body.email, req.body.username, req.body.profilePicture);
     }
 });
+
+app.post("/review", async (req, res) => {
+    console.log(req.body);
+    res.status(200).send("Got review");
+});
+
+//Temporary request to get 3 parks
+app.get("/getSamplePark", async (_, res) => {
+    const { data } = await axios.get("https://developer.nps.gov/api/v1/parks", {
+        params: {
+            api_key: "QrLp7DRXSIHRyLUBfVZKDxDxexWLyXiJb4fyNqnB",
+            stateCode: "NJ"
+        }
+    });
+    return res.status(200).json(data.data.slice(0, 1));
+})
 
 app.listen(3000, () => {
     console.log(`Public Park Adventures listening at http://localhost:3000`);
