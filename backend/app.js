@@ -2,7 +2,11 @@ import express from "express";
 import cors from "cors";
 import Datastore from "@seald-io/nedb";
 import axios from "axios";
+import dotenv from "dotenv";
 
+dotenv.config(); // rhasan1 - 10/30/2024 - Added dotenv to load environment variables
+
+const NPS_API_KEY = process.env.NPS_API_KEY;
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -57,16 +61,19 @@ app.post("/review", async (req, res) => {
     res.status(200).send("Got review");
 });
 
-//Temporary request to get 3 parks
+// Temporary request to get 3 parks
 app.get("/getSamplePark", async (_, res) => {
     const { data } = await axios.get("https://developer.nps.gov/api/v1/parks", {
         params: {
-            api_key: "QrLp7DRXSIHRyLUBfVZKDxDxexWLyXiJb4fyNqnB",
+            api_key: NPS_API_KEY,
             stateCode: "NJ"
         }
     });
     return res.status(200).json(data.data.slice(0, 1));
 })
+// rhasan1 - 10/30/2024 - replaced the API key with the one from the environment variables
+
+
 
 app.listen(3000, () => {
     console.log(`Public Park Adventures listening at http://localhost:3000`);
