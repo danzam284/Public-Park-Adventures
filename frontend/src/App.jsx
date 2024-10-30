@@ -4,6 +4,7 @@ import { SignedOut, SignedIn, SignIn, SignUp, UserButton } from "@clerk/clerk-re
 import { Routes, Route } from "react-router-dom";
 import Home from './components/Home.jsx';
 import SignedOutPage from './components/SignedOutPage.jsx';
+import Rate from './components/Rate.jsx';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <UserButton />
         <Routes>
           <Route path='/' element={<Home/>} />
+          <Route path='/rate' element={<Rate/>} />
           <Route path="/sign-in/*" element={<SignIn />} />
           <Route path="/sign-up/*" element={<SignUp />} />
         </Routes>
