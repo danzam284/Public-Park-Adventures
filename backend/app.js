@@ -73,6 +73,28 @@ app.get("/getSamplePark", async (_, res) => {
 })
 // rhasan1 - 10/30/2024 - replaced the API key with the one from the environment variables
 
+app.get("/searchPark", async (req, res) => {
+    const { query } = req.query;
+    if (!query) {
+        return res.status(400).send("Query parameter is required");
+    }
+
+    try {
+        const { data } = await axios.get("https://developer.nps.gov/api/v1/parks", {
+            params: {
+                api_key: NPS_API_KEY,
+                stateCode: "NJ",
+                q: query.trim().toLowerCase(),
+                limit: 10
+            }
+        });
+        return res.status(200).json(data.data);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send("apps.js: An error occurred while searching for parks");
+    }
+});
+// rhasan1 - 10/30/2024 - Added a searchPark endpoint to search for parks by name
 
 
 app.listen(3000, () => {
