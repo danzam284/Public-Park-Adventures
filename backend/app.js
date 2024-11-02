@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import Datastore from "@seald-io/nedb";
 import axios from "axios";
+import {userData} from "./data/index.js";
 
 const app = express();
 app.use(cors());
@@ -16,6 +17,7 @@ const usersDB = new Datastore({ filename: "database/users.db", autoload: true })
  * @returns A boolean whether the user already exists
  */
 async function userExists(id) {
+    /*
     return new Promise((resolve, reject) => {
         usersDB.findOne({ id }, (err, exists) => {
             if (err) {
@@ -25,12 +27,21 @@ async function userExists(id) {
             }
         });
     });
+    */
+    try {
+        await userData.getUserByID(id);
+        return true;
+    }
+    catch (error) {
+        return false;
+    }
 }
 
 /**
  * Adds a new user to the DB
  */
-async function createUser(id, email, username, pic) {
+async function createUser(id, email, username, pic, password) {
+    /*
     const newUser = {
         id,
         email,
@@ -43,12 +54,15 @@ async function createUser(id, email, username, pic) {
             console.error(err)
         }
     });
+    */
+    await userData.create(id, email, username, pic, password);
 }
 
 app.post("/newUser", async (req, _) => {
     const exists = await userExists(req.body.id);
     if (!exists) {
-        createUser(req.body.id, req.body.email, req.body.username, req.body.profilePicture);
+        //createUser(req.body.id, req.body.email, req.body.username, req.body.profilePicture);
+        userData.create(req.body.id, req.body.email, req.body.username, req.body.profilePicture, req.body.password);
     }
 });
 
