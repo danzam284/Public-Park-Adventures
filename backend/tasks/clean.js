@@ -1,11 +1,13 @@
-import { meals, users } from "../config/mongoCollections.js";
+import { users, parks, reviews } from "../config/mongoCollections.js";
 
 const clean = async () => {
     let userCollection = await users();
-    let mealCollection = await meals();
+    let parkCollection = await parks();
+    let reviewCollection = await reviews();
 
     await userCollection.deleteMany({});
-    await mealCollection.deleteMany({});
+    await parkCollection.deleteMany({});
+    await reviewCollection.deleteMany({});
 
     console.log("Done deleting! Happy repopulating :D!");
 }
