@@ -3,15 +3,13 @@ import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import { Rating } from '@mui/material';
 
 function Home() {
     const { isSignedIn, user } = useUser();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
-    const [park, setPark] = useState(null);
+    const [parks, setParks] = useState(null);
     
     //Sends a request to register the user if they have not been already
     useEffect(() => {
@@ -30,63 +28,38 @@ function Home() {
 
     useEffect(() => {
         async function getPark() {
-            const {data} = await axios.get("http://localhost:3000/getSamplePark");
+            const {data} = await axios.get("http://localhost:3000/getTopParks");
             setLoading(false);
-            setPark(data[0]);
+            setParks(data);
         }
 
         getPark();
     }, []);
-
-    const handleSearch = async () => {
-        try {
-            const { data } = await axios.get("http://localhost:3000/searchPark", {
-                params: { query: searchQuery }
-            });
-            setSearchResults(data);
-        } catch (error) {
-            console.error("Error searching for parks:", error);
-        }
-    };
 
     if (loading) {
         return "Loading..."
     }
 
     return <div>
-        <h1>Public Park Adventures Homepage</h1>
-        
-        {/* Search Form */}
-        <div>
-            <input 
-                type="text" 
-                value={searchQuery} 
-                onChange={(e) => setSearchQuery(e.target.value)} 
-                placeholder="Search for parks..."
-            />
-            <button onClick={handleSearch}>Search</button>
-        </div>
+        <button onClick={() => navigate(`/search`)}>Search For Parks</button>
+        <h1>Public Park Adventures</h1>
 
-        {/* Display Search Results */}
-        {searchResults.length > 0 && (
-            <div>
-                <h2>Search Results</h2>
-                {searchResults.map((park) => (
-                    <div key={park.id}>
-                        <h3>{park.fullName}</h3>
-                        <img width={200} src={park.images[0]?.url} alt={park.fullName} />
-                        <p>{park.description}</p>
-                    </div>
-                ))}
+        <h4>Top Rated Parks</h4>
+        <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+            {parks.map((park) => (
+                <div key={park._id} style={{backgroundColor: "aliceblue", color: "black", borderRadius: "10px", width: "30%", height: "450px", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
+                <Rating
+                    readOnly
+                    size="large"
+                    name="overall-rating"
+                    value={isNaN(park.ratings[0]) ? 0 : parseFloat(park.ratings[0])}
+                    precision={0.1}
+                />
+                <h2>{park.apiData.fullName}</h2>
+                <img width={200} src={park.apiData.images[0].url}></img><br></br>
+                <button onClick={() => navigate(`/park/${park.apiData.parkCode}`)}>More Info</button>
             </div>
-        )}
-
-        {/* Rate Park Button */}
-        <div>
-            <h2>{park.fullName}</h2>
-            <img width={200} src={park.images[0].url}></img><br></br>
-            <button onClick={() => navigate("/rate", { state: park })}>Rate</button>
-            <p>{park.description}</p>
+            ))}
         </div>
     </div>
 }

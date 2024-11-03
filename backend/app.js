@@ -4,7 +4,7 @@ import Datastore from "@seald-io/nedb";
 import axios from "axios";
 
 import dotenv from "dotenv";
-import {userData} from "./data/index.js";
+import {userData, reviewData, parkData} from "./data/index.js";
 
 
 dotenv.config(); // rhasan1 - 10/30/2024 - Added dotenv to load environment variables
@@ -72,22 +72,73 @@ app.post("/newUser", async (req, _) => {
     }
 });
 
-app.post("/review", async (req, res) => {
-    console.log(req.body);
-    res.status(200).send("Got review");
+app.post("/newReview", async (req, res) => {
+    try {
+        await reviewData.create(
+            req.body.reviewerId,
+            req.body.parkId,
+            req.body.ratings,
+            req.body.reviewTitle,
+            req.body.comments
+        );
+        return res.status(200).send("Got review");
+    } catch(e) {
+        return res.status(400).send(e);
+    }
 });
 
-// Temporary request to get 3 parks
-app.get("/getSamplePark", async (_, res) => {
-    const { data } = await axios.get("https://developer.nps.gov/api/v1/parks", {
-        params: {
-            api_key: NPS_API_KEY,
-            stateCode: "NJ"
+app.get("/getParks", async (_, res) => {
+    try {
+        res.status(200).json(await parkData.getParks());
+    } catch(e) {
+        return res.status(400).send(e);
+    }
+});
+
+app.get("/getPark/:id", async (req, res) => {
+    try {
+        const park = await parkData.getByID(req.params.id.trim());
+        park.ratings = await parkData.calculateParkRatings(park);
+        res.status(200).json(park);
+    } catch(e) {
+        console.log(e);
+        return res.status(400).send(e);
+    }
+});
+
+app.get("/getReviews/:id", async (req, res) => {
+    try {
+        const reviews = await parkData.getReviews(req.params.id.trim());
+        res.status(200).json(reviews);
+    } catch(e) {
+        console.log(e);
+        return res.status(400).send(e);
+    }
+});
+
+app.get("/getTopParks", async (_, res) => {
+    try {
+        let topParks = await parkData.getTopParks();
+        for (let i = 0; i < 3; i++) {
+            topParks[i].ratings = await parkData.calculateParkRatings(topParks[i]);
         }
-    });
-    return res.status(200).json(data.data.slice(0, 1));
-})
-// rhasan1 - 10/30/2024 - replaced the API key with the one from the environment variables
+        res.status(200).json(topParks.slice(0, 3));
+    } catch(e) {
+        console.log(e);
+        return res.status(400).send(e);
+    }
+});
+
+app.get("/getParkRating/:id", async (req, res) => {
+    try {
+        const park = await parkData.getByID(req.params.id.trim());
+        const ratings = await parkData.calculateParkRatings(park);
+        res.status(200).json(ratings);
+    } catch (e) {
+        console.log(e);
+        return res.status(400).send(e);
+    }
+});
 
 app.get("/searchPark", async (req, res) => {
     const { query } = req.query;
@@ -104,7 +155,20 @@ app.get("/searchPark", async (req, res) => {
                 limit: 10
             }
         });
-        return res.status(200).json(data.data);
+
+        const parks = [];
+        for (let i = 0; i < data.data.length; i++) {
+            try {
+                const park = await parkData.getByID(data.data[i].parkCode);
+                const ratings = await parkData.calculateParkRatings(park);
+                park.ratings = ratings;
+                parks.push(park);
+            } catch(e) {
+                console.log(e);
+                //Do nothing
+            }
+        }
+        return res.status(200).json(parks);
     } catch (error) {
         console.error(error);
         return res.status(500).send("apps.js: An error occurred while searching for parks");

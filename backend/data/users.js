@@ -152,7 +152,7 @@ const addReview = async (userId, reviewId) => {
     return "Database error.";
   }
 
-  userCollection.update({
+  await userCollection.updateOne({
     _id: userId
   },
   {
@@ -170,7 +170,7 @@ const removeReview = async (userId, reviewId) => {
     return "Database error.";
   }
 
-  userCollection.update({
+  await userCollection.updateOne({
     _id: userId
   },
   {
@@ -188,7 +188,7 @@ const addHeartedPark = async (userId, parkId) => {
     return "Database error.";
   }
 
-  userCollection.update({
+  await userCollection.updateOne({
     _id: userId
   },
   {
@@ -206,7 +206,7 @@ const removeHeartedPark = async (userId, parkId) => {
     return "Database error.";
   }
 
-  userCollection.update({
+  await userCollection.updateOne({
     _id: userId
   },
   {

@@ -50,6 +50,63 @@ const getByID = async (id) => {
     return park;
 };
 
+const getParks = async () => {
+    const parkCollection = await parks();
+    return await parkCollection.find({}).toArray();
+}
+
+const getReviews = async(id) => {
+    validation.checkNull(id);
+    const reviews = [];
+
+    const park = await getByID(id);
+    for (let i = 0; i < park.reviews.length; i++) {
+        try {
+            const review = await reviewData.getByID(park.reviews[i]);
+            reviews.push(review);
+        } catch(e) {
+            console.log(e);
+        }
+    }
+    return reviews;
+}
+
+const calculateParkRatings = async(park) => {
+    const reviews = park.reviews;
+    const averages = [0, 0, 0, 0, 0, 0];
+    let numReviews = 0;
+
+    for (let i = 0; i < reviews.length; i++) {
+        try {
+            const review = await reviewData.getByID(reviews[i]);
+            numReviews++;
+            averages[0] += parseFloat(review.ratings.overallRating);
+            averages[1] += parseFloat(review.ratings.cleanlinessRating);
+            averages[2] += parseFloat(review.ratings.ammenitiesRating);
+            averages[3] += parseFloat(review.ratings.accessibilityRating);
+            averages[4] += parseFloat(review.ratings.beautyRating);
+            averages[5] += parseFloat(review.ratings.natureRating);
+        } catch(e) {
+            //Do nothing
+        }
+    }
+
+    return averages.map((avg) => numReviews === 0 ? 0 : parseFloat((avg / numReviews).toFixed(1)) );
+}
+
+const getTopParks = async() => {
+    const parks = await getParks();
+
+    const parksWithRatings = await Promise.all(parks.map(async (park) => {
+        const ratings = await calculateParkRatings(park);
+        return { park, rating: ratings[0] };
+    }));
+
+    parksWithRatings.sort((a, b) => b.rating - a.rating);
+
+    return parksWithRatings.map(({ park }) => park);
+}
+
 const addReview = async (parkId, reviewId) => {
     let parkCollection;
     try {
@@ -59,9 +116,9 @@ const addReview = async (parkId, reviewId) => {
         return "Database error.";
     }
 
-    let oldRatings = getByID(parkId);
+    let oldRatings = await getByID(parkId);
 
-    parkCollection.update({
+    await parkCollection.updateOne({
         _id: parkId
     },
     {
@@ -79,7 +136,7 @@ const removeReview = async (parkId, reviewId) => {
         return "Database error.";
     }
 
-    parkCollection.update({
+    await parkCollection.updateOne({
         _id: parkId
     },
     {
@@ -93,5 +150,9 @@ export default {
     update,
     getByID,
     addReview,
-    removeReview
+    removeReview,
+    getParks,
+    getReviews,
+    getTopParks,
+    calculateParkRatings
 };
