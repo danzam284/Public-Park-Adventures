@@ -223,6 +223,6 @@ export default {
   login,
   addReview,
   removeReview,
-  addHeartedPark
+  addHeartedPark,
   removeHeartedPark
 };

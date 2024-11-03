@@ -7,15 +7,37 @@ const create = async (
     apiData
 ) => {
     let newPark = {
+        _id: apiData.parkCode,
         apiData: apiData,
-        reviews: []
+        reviews: [],
+        ratings: {}
     };
 
     const parkCollection = await parks();
 
     const newInsertInformation = await parkCollection.insertOne(newPark);
     if (!newInsertInformation.insertedId) throw "Insert failed";
-    return await getByID(_id);
+    return await getByID(newPark._id);
+};
+
+const update = async (
+    apiData
+) => {
+    let newPark = {
+        apiData: apiData
+    };
+
+    const parkCollection = await parks();
+
+    const newUpdateInformation = await parkCollection.updateOne(
+        {
+            _id: apiData.parkCode
+        },
+        {
+            $set: {"apiData": apiData}
+        }
+    );
+    return await getByID(apiData.parkCode);
 };
 
 const getByID = async (id) => {
@@ -36,6 +58,8 @@ const addReview = async (parkId, reviewId) => {
     catch (error) {
         return "Database error.";
     }
+
+    let oldRatings = getByID(parkId);
 
     parkCollection.update({
         _id: parkId
@@ -66,6 +90,7 @@ const removeReview = async (parkId, reviewId) => {
 
 export default {
     create,
+    update,
     getByID,
     addReview,
     removeReview

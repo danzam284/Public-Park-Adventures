@@ -139,7 +139,7 @@ const findHelpful = async (id) => {
             _id: id
         },
         {
-            $inc {
+            $inc: {
                 foundHelpful: 1
             }
         }
@@ -156,7 +156,7 @@ const findUnhelpful = async (id) => {
             _id: id
         },
         {
-            $inc {
+            $inc: {
                 foundHelpful: -1
             }
         }
