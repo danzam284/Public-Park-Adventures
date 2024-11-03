@@ -5,6 +5,8 @@ import { Routes, Route } from "react-router-dom";
 import Home from './components/Home.jsx';
 import SignedOutPage from './components/SignedOutPage.jsx';
 import Rate from './components/Rate.jsx';
+import Park from './components/Park.jsx';
+import Search from './components/Search.jsx';
 
 function App() {
   return (
@@ -14,10 +16,11 @@ function App() {
       </SignedOut>
 
       <SignedIn>
-        <UserButton />
         <Routes>
           <Route path='/' element={<Home/>} />
+          <Route path='/park/:id' element={<Park/>} />
           <Route path='/rate' element={<Rate/>} />
+          <Route path='/search' element={<Search/>} />
           <Route path="/sign-in/*" element={<SignIn />} />
           <Route path="/sign-up/*" element={<SignUp />} />
         </Routes>

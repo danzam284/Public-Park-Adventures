@@ -31,10 +31,10 @@ const create = async (
             throw "This park has already been reviewed by this user, please edit it instead.";
 
     if (typeof ratings !== 'object')
-        throw "Ratings must be an object with category keys and numerical integer values between 0 and 10";
+        throw "Ratings must be an object with category keys and numerical integer values between 0 and 5";
     for (let rating in ratings)
-        if (!(Number.isInteger(ratings[rating])) || ratings[rating] < 0 || ratings[rating] > 10)
-            throw `Rating ${rating} must be an integer between 0 and 10, please check your ratings again.`;
+        if (!(Number(ratings[rating]) === ratings[rating]) || ratings[rating] < 0 || ratings[rating] > 5)
+            throw `Rating ${rating} must be a number between 0 and 5, please check your ratings again.`;
 
     let newReview = {
         userId: userId,
@@ -52,8 +52,8 @@ const create = async (
     if (!newInsertInformation.insertedId) throw "Insert failed";
 
     let _id = newInsertInformation.insertedId.toString();
-    userData.addReview(userId, _id);
-    parkData.addReview(parkId, _id);
+    await userData.addReview(userId, _id);
+    await parkData.addReview(parkId, _id);
     return await getByID(_id);
 };
 
@@ -61,7 +61,7 @@ const getByID = async (id) => {
     id = validation.checkId(id);
     const reviewCollection = await reviews();
     const review = await reviewCollection.findOne({
-        _id: id,
+        _id: new ObjectId(id),
     });
     if (!review) throw "Error: Review not found";
     return review;
@@ -95,10 +95,10 @@ const update = async (id, ratings, title, text, image) => {
     if (ratings) {
         validation.checkNull(ratings);
         if (typeof ratings !== 'object')
-            throw "Ratings must be an object with category keys and numerical integer values between 0 and 10";
+            throw "Ratings must be an object with category keys and numerical integer values between 0 and 5";
         for (let rating in ratings)
-            if (!(Number.isInteger(ratings[rating])) || ratings[rating] < 0 || ratings[rating] > 10)
-                throw `Rating ${rating} must be an integer between 0 and 10, please check your ratings again.`;
+            if (!(Number(ratings[rating]) === ratings[rating]) || ratings[rating] < 0 || ratings[rating] > 5)
+                throw `Rating ${rating} must be a number between 0 and 5, please check your ratings again.`;
 
         newReview.ratings = ratings;
     }
