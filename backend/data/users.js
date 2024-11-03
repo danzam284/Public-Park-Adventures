@@ -3,7 +3,6 @@ import { ObjectId } from "mongodb";
 import { users } from "../config/mongoCollections.js";
 import bcrypt from "bcrypt";
 
-// Function for creating a user in the user data base
 const create = async (
   id,
   email,
@@ -52,11 +51,11 @@ const create = async (
 
   const newInsertInformation = await userCollection.insertOne(newUser);
   if (!newInsertInformation.insertedId) throw "Insert failed";
-  return await getUserByID(_id);
+  return await getByID(_id);
 };
 
-const getUserByID = async (id) => {
-  id = validation.checkId(id);
+const getByID = async (id) => {
+  validation.checkNull(id);
   const userCollection = await users();
   const user = await userCollection.findOne({
     _id: id,
@@ -66,9 +65,10 @@ const getUserByID = async (id) => {
   return allElse;
 };
 
-// Function for deleting user in database given the id
 const remove = async (id) => {
-  id = validation.checkId(id);
+  validation.checkNull(id);
+  let user = await getByID(id);
+
   const userCollection = await users();
   const userDeletionInfo = await userCollection.findOneAndDelete({
     _id: id,
@@ -81,11 +81,13 @@ const remove = async (id) => {
   return `User: ${id} has been deleted`;
 };
 
-const updateUser = async (id, email, username, password, profilePicture) => {
+const update = async (id, email, username, password, profilePicture) => {
   validation.checkNull(id);
-  id = validation.checkId(id);
 
+  let user = await getByID(id);
   let newUser = {};
+
+  const userCollection = await users();
 
   if (email) {
     validation.validateEmail(email);
@@ -110,17 +112,17 @@ const updateUser = async (id, email, username, password, profilePicture) => {
   if (profilePicture)
     newUser.profilePicture = profilePicture;
 
-  let updateUser = userCollection.updateOne(
+
+  let updateUser = await userCollection.updateOne(
     { _id: id },
     { $set: newUser }
   );
 
   if (!updateUser) throw "Error: User could not be updated";
-  return await getUserByID(id);
+  return await getByID(id);
 };
 
-// Function to return user login information.
-const loginUser = async (email, password) => {
+const login = async (email, password) => {
   let userCollection;
   try {
     userCollection = await users();
@@ -138,13 +140,89 @@ const loginUser = async (email, password) => {
   let authenticated = await bcrypt.compare(password, user.hashedPass);
   if (!authenticated) throw "Incorrect User Name or Password";
 
-  return getUserByID(user._id);
+  return await getByID(user._id);
 };
+
+const addReview = async (userId, reviewId) => {
+  let userCollection;
+  try {
+    userCollection = await users();
+  }
+  catch (error) {
+    return "Database error.";
+  }
+
+  userCollection.update({
+    _id: userId
+  },
+  {
+    $push: {"reviews": reviewId}
+  }
+  );
+}
+
+const removeReview = async (userId, reviewId) => {
+  let userCollection;
+  try {
+    userCollection = await users();
+  }
+  catch (error) {
+    return "Database error.";
+  }
+
+  userCollection.update({
+    _id: userId
+  },
+  {
+    $pull: {"reviews": reviewId}
+  }
+  );
+}
+
+const addHeartedPark = async (userId, parkId) => {
+  let userCollection;
+  try {
+    userCollection = await users();
+  }
+  catch (error) {
+    return "Database error.";
+  }
+
+  userCollection.update({
+    _id: userId
+  },
+  {
+    $push: {"heartedParks": parkId}
+  }
+  );
+}
+
+const removeHeartedPark = async (userId, parkId) => {
+  let userCollection;
+  try {
+    userCollection = await users();
+  }
+  catch (error) {
+    return "Database error.";
+  }
+
+  userCollection.update({
+    _id: userId
+  },
+  {
+    $pull: {"heartedParks": parkId}
+  }
+  );
+}
 
 export default {
   create,
-  getUserByID,
+  getByID,
   remove,
-  updateUser,
-  loginUser,
+  update,
+  login,
+  addReview,
+  removeReview,
+  addHeartedPark,
+  removeHeartedPark
 };

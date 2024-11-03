@@ -35,7 +35,7 @@ async function userExists(id) {
     });
     */
     try {
-        await userData.getUserByID(id);
+        await userData.getByID(id);
         return true;
     }
     catch (error) {
