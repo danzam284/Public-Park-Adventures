@@ -1,4 +1,4 @@
-import { userData, mealData } from "../data/index.js";
+import { userData, parkData, reviewData } from "../data/index.js";
 
 const seed = async () => {}
 
