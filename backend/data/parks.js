@@ -59,13 +59,35 @@ const addReview = async (parkId, reviewId) => {
         return "Database error.";
     }
 
-    let oldRatings = getByID(parkId);
+    let review = await reviewData.getByID(reviewId);
+    let ratings = await getByID(parkId).ratings;
+
+    let total;
+    let count;
+    let avg;
+    for (let reviewRating in review.ratings) {
+        if (ratings[reviewRating]) {
+            total = ratings[reviewRating].count * ratings[reviewRating].avg + review.ratings[reviewRating];
+            count = ratings[reviewRating].count + 1;
+        }
+        else {
+            ratings[reviewRating] = {};
+
+            total = review.ratings[reviewRating];
+            count = 1;
+        }
+
+        avg = total / count;
+        ratings[reviewRating].avg = avg;
+        ratings[reviewRating].count = count;
+    }
 
     parkCollection.update({
         _id: parkId
     },
     {
-        $push: {"reviews": reviewId}
+        $push: {"reviews": reviewId},
+        $set: {"ratings": ratings}
     }
     );
 }
@@ -79,11 +101,29 @@ const removeReview = async (parkId, reviewId) => {
         return "Database error.";
     }
 
+    let review = await reviewData.getByID(reviewId);
+    let ratings = await getByID(parkId).ratings;
+
+    for (let reviewRating in review.ratings) {
+        if (ratings[reviewRating].count > 1) {
+            let total = ratings[reviewRating].count * ratings[reviewRating].avg - review.ratings[reviewRating];
+            let count = ratings[reviewRating].count - 1;
+
+            let avg = total / count;
+            ratings[reviewRating].avg = avg;
+            ratings[reviewRating].count = count;
+        }
+        else {
+            delete ratings[reviewRating];
+        }
+    }
+
     parkCollection.update({
         _id: parkId
     },
     {
-        $pull: {"reviews": reviewId}
+        $pull: {"reviews": reviewId},
+        $set: {"ratings": ratings}
     }
     );
 }
