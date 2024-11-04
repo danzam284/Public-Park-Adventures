@@ -52,7 +52,7 @@ function Home() {
                     readOnly
                     size="large"
                     name="overall-rating"
-                    value={isNaN(park.ratings[0]) ? 0 : parseFloat(park.ratings[0])}
+                    value={park.ratings?.overallRating?.avg ?? 0}
                     precision={0.1}
                 />
                 <h2>{park.apiData.fullName}</h2>

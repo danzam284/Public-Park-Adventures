@@ -71,40 +71,11 @@ const getReviews = async(id) => {
     return reviews;
 }
 
-const calculateParkRatings = async(park) => {
-    const reviews = park.reviews;
-    const averages = [0, 0, 0, 0, 0, 0];
-    let numReviews = 0;
-
-    for (let i = 0; i < reviews.length; i++) {
-        try {
-            const review = await reviewData.getByID(reviews[i]);
-            numReviews++;
-            averages[0] += parseFloat(review.ratings.overallRating);
-            averages[1] += parseFloat(review.ratings.cleanlinessRating);
-            averages[2] += parseFloat(review.ratings.ammenitiesRating);
-            averages[3] += parseFloat(review.ratings.accessibilityRating);
-            averages[4] += parseFloat(review.ratings.beautyRating);
-            averages[5] += parseFloat(review.ratings.natureRating);
-        } catch(e) {
-            //Do nothing
-        }
-    }
-
-    return averages.map((avg) => numReviews === 0 ? 0 : parseFloat((avg / numReviews).toFixed(1)) );
-}
 
 const getTopParks = async() => {
     const parks = await getParks();
-
-    const parksWithRatings = await Promise.all(parks.map(async (park) => {
-        const ratings = await calculateParkRatings(park);
-        return { park, rating: ratings[0] };
-    }));
-
-    parksWithRatings.sort((a, b) => b.rating - a.rating);
-
-    return parksWithRatings.map(({ park }) => park);
+    parks.sort((a, b) => b.ratings.overallRating?.avg ?? 0 - a.ratings.overallRating?.avg ?? 0);
+    return parks;
 }
 
 const addReview = async (parkId, reviewId) => {
@@ -116,14 +87,33 @@ const addReview = async (parkId, reviewId) => {
         return "Database error.";
     }
 
-    let oldRatings = await getByID(parkId);
+    let review = await reviewData.getByID(reviewId);
+    let ratings = (await getByID(parkId)).ratings;
+    let total;
+    let count;
+    let avg;
+    for (let reviewRating in review.ratings) {
+        if (ratings.hasOwnProperty(reviewRating)) {
+            total = ratings[reviewRating].count * ratings[reviewRating].avg + review.ratings[reviewRating];
+            count = ratings[reviewRating].count + 1;
+        }
+        else {
+            ratings[reviewRating] = {};
+            total = review.ratings[reviewRating];
+            count = 1;
+        }
+        avg = total / count;
+        ratings[reviewRating].avg = avg;
+        ratings[reviewRating].count = count;
+    }
 
     await parkCollection.updateOne({
-        _id: parkId
-    },
-    {
-        $push: {"reviews": reviewId}
-    }
+            _id: parkId
+        },
+        {
+            $push: {"reviews": reviewId},
+            $set: {"ratings": ratings}
+        }
     );
 }
 
@@ -136,12 +126,28 @@ const removeReview = async (parkId, reviewId) => {
         return "Database error.";
     }
 
-    await parkCollection.updateOne({
-        _id: parkId
-    },
-    {
-        $pull: {"reviews": reviewId}
+    let review = await reviewData.getByID(reviewId);
+    let ratings = await getByID(parkId).ratings;
+    for (let reviewRating in review.ratings) {
+        if (ratings[reviewRating].count > 1) {
+            let total = ratings[reviewRating].count * ratings[reviewRating].avg - review.ratings[reviewRating];
+            let count = ratings[reviewRating].count - 1;
+            let avg = total / count;
+            ratings[reviewRating].avg = avg;
+            ratings[reviewRating].count = count;
+        }
+        else {
+            delete ratings[reviewRating];
+        }
     }
+
+    await parkCollection.updateOne({
+            _id: parkId
+        },
+        {
+            $pull: {"reviews": reviewId},
+            $set: {"ratings": ratings}
+        }
     );
 }
 
@@ -154,5 +160,4 @@ export default {
     getParks,
     getReviews,
     getTopParks,
-    calculateParkRatings
 };

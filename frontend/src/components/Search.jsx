@@ -53,7 +53,7 @@ function Search() {
                                 readOnly
                                 size="large"
                                 name="overall-rating"
-                                value={park.ratings[0]}
+                                value={park.ratings.overallRating?.avg ?? 0}
                                 precision={0.1}
                             />
                             <h2>{park.apiData.fullName}</h2>
