@@ -83,6 +83,7 @@ app.post("/newReview", async (req, res) => {
         );
         return res.status(200).send("Got review");
     } catch(e) {
+        console.log(e);
         return res.status(400).send(e);
     }
 });
@@ -98,7 +99,6 @@ app.get("/getParks", async (_, res) => {
 app.get("/getPark/:id", async (req, res) => {
     try {
         const park = await parkData.getByID(req.params.id.trim());
-        park.ratings = await parkData.calculateParkRatings(park);
         res.status(200).json(park);
     } catch(e) {
         console.log(e);
@@ -119,9 +119,6 @@ app.get("/getReviews/:id", async (req, res) => {
 app.get("/getTopParks", async (_, res) => {
     try {
         let topParks = await parkData.getTopParks();
-        for (let i = 0; i < 3; i++) {
-            topParks[i].ratings = await parkData.calculateParkRatings(topParks[i]);
-        }
         res.status(200).json(topParks.slice(0, 3));
     } catch(e) {
         console.log(e);
@@ -129,46 +126,23 @@ app.get("/getTopParks", async (_, res) => {
     }
 });
 
-app.get("/getParkRating/:id", async (req, res) => {
-    try {
-        const park = await parkData.getByID(req.params.id.trim());
-        const ratings = await parkData.calculateParkRatings(park);
-        res.status(200).json(ratings);
-    } catch (e) {
-        console.log(e);
-        return res.status(400).send(e);
-    }
-});
-
 app.get("/searchPark", async (req, res) => {
     const { query } = req.query;
+
     if (!query) {
         return res.status(400).send("Query parameter is required");
     }
 
     try {
-        const { data } = await axios.get("https://developer.nps.gov/api/v1/parks", {
-            params: {
-                api_key: NPS_API_KEY,
-                stateCode: "NJ",
-                q: query.trim().toLowerCase(),
-                limit: 10
-            }
+        const parks = await parkData.getParks();
+        const queryRegex = new RegExp(query, 'i');
+        const filteredParks = parks.filter((park) => {
+            return (
+                queryRegex.test(park.apiData.fullName) ||
+                queryRegex.test(park.apiData.description)
+            );
         });
-
-        const parks = [];
-        for (let i = 0; i < data.data.length; i++) {
-            try {
-                const park = await parkData.getByID(data.data[i].parkCode);
-                const ratings = await parkData.calculateParkRatings(park);
-                park.ratings = ratings;
-                parks.push(park);
-            } catch(e) {
-                console.log(e);
-                //Do nothing
-            }
-        }
-        return res.status(200).json(parks);
+        return res.status(200).json(filteredParks);
     } catch (error) {
         console.error(error);
         return res.status(500).send("apps.js: An error occurred while searching for parks");

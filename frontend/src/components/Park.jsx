@@ -46,7 +46,7 @@ function Park() {
                 readOnly
                 size="large"
                 name="overall-rating"
-                value={park.ratings[0]}
+                value={park.ratings.overallRating?.avg ?? 0}
                 precision={0.1}
             /><br></br>
 
@@ -71,35 +71,35 @@ function Park() {
                 readOnly
                 size="small"
                 name="cleanliness-rating"
-                value={park.ratings[1]}
+                value={park.ratings.cleanlinessRating?.avg ?? 0}
                 precision={0.1}
             /></p>
             <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Ammenities <Rating
                 readOnly
                 size="small"
                 name="ammenities-rating"
-                value={park.ratings[2]}
+                value={park.ratings.ammenitiesRating?.avg ?? 0}
                 precision={0.1}
             /></p>
             <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Accessibility <Rating
                 readOnly
                 size="small"
                 name="accessibility-rating"
-                value={park.ratings[3]}
+                value={park.ratings.accessibilityRating?.avg ?? 0}
                 precision={0.1}
             /></p>
             <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Beauty <Rating
                 readOnly
                 size="small"
                 name="beauty-rating"
-                value={park.ratings[4]}
+                value={park.ratings.beautyRating?.avg ?? 0}
                 precision={0.1}
             /></p>
             <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Nature <Rating
                 readOnly
                 size="small"
                 name="nature-rating"
-                value={park.ratings[5]}
+                value={park.ratings.natureRating?.avg ?? 0}
                 precision={0.1}
             /></p>
 
