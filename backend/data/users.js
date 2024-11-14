@@ -14,21 +14,13 @@ const create = async (
   // Validate Null
   validation.checkNull(email);
   validation.checkNull(username);
-  validation.checkNull(password);
 
   // * Validate String params
   email = validation.checkString(email, "Email");
   username = validation.checkString(username, "User Name");
-  password = validation.checkString(password, "Password");
 
   // * Validate Email
   validation.validateEmail(email);
-
-  // * Password validation and hashing
-  validation.validatePassword(password);
-
-  const saltRounds = 16;
-  const hash = await bcrypt.hash(password, saltRounds);
 
   //Create user object to put into collection
   let newUser = {
@@ -36,7 +28,6 @@ const create = async (
     email: email,
     username: username,
     profilePicture: profilePicture,
-    hashedPass: hash,
     reviews: [],
     heartedParks: [],
   };
@@ -51,7 +42,7 @@ const create = async (
 
   const newInsertInformation = await userCollection.insertOne(newUser);
   if (!newInsertInformation.insertedId) throw "Insert failed";
-  return await getByID(_id);
+  return await getByID(id);
 };
 
 const getByID = async (id) => {
@@ -61,8 +52,7 @@ const getByID = async (id) => {
     _id: id,
   });
   if (!user) throw "Error: User not found";
-  const {hashedPass, ...allElse} = user;
-  return allElse;
+  return user;
 };
 
 const remove = async (id) => {
@@ -81,7 +71,7 @@ const remove = async (id) => {
   return `User: ${id} has been deleted`;
 };
 
-const update = async (id, email, username, password, profilePicture) => {
+const update = async (id, email, username, profilePicture) => {
   validation.checkNull(id);
 
   let user = await getByID(id);
@@ -102,13 +92,6 @@ const update = async (id, email, username, password, profilePicture) => {
     newUser.username = username;
   }
 
-  if (password) {
-    validation.validatePassword(password);
-    const saltRounds = 16;
-    const hash = await bcrypt.hash(password, saltRounds);
-    newUser.hashedPass = hash;
-  }
-
   if (profilePicture)
     newUser.profilePicture = profilePicture;
 
@@ -120,27 +103,6 @@ const update = async (id, email, username, password, profilePicture) => {
 
   if (!updateUser) throw "Error: User could not be updated";
   return await getByID(id);
-};
-
-const login = async (email, password) => {
-  let userCollection;
-  try {
-    userCollection = await users();
-  }
-  catch (error) {
-    return "Database error.";
-  }
-
-  validation.validateEmail(email);
-  validation.validatePassword(password);
-
-  let user = await userCollection.findOne({ email: email });
-  if (user == null) throw "Incorrect User Name or Password";
-
-  let authenticated = await bcrypt.compare(password, user.hashedPass);
-  if (!authenticated) throw "Incorrect User Name or Password";
-
-  return await getByID(user._id);
 };
 
 const addReview = async (userId, reviewId) => {
@@ -220,7 +182,6 @@ export default {
   getByID,
   remove,
   update,
-  login,
   addReview,
   removeReview,
   addHeartedPark,
