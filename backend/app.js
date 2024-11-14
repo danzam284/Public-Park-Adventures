@@ -46,7 +46,7 @@ async function userExists(id) {
 /**
  * Adds a new user to the DB
  */
-async function createUser(id, email, username, pic, password) {
+async function createUser(id, email, username, pic) {
     /*
     const newUser = {
         id,
@@ -61,7 +61,7 @@ async function createUser(id, email, username, pic, password) {
         }
     });
     */
-    await userData.create(id, email, username, pic, password);
+    await userData.create(id, email, username, pic);
 }
 
 app.post("/newUser", async (req, _) => {
