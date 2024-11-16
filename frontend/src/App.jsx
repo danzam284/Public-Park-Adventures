@@ -7,6 +7,7 @@ import SignedOutPage from './components/SignedOutPage.jsx';
 import Rate from './components/Rate.jsx';
 import Park from './components/Park.jsx';
 import Search from './components/Search.jsx';
+import Location from './components/Location.jsx';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path='/park/:id' element={<Park/>} />
           <Route path='/rate' element={<Rate/>} />
           <Route path='/search' element={<Search/>} />
+          <Route path='/location' element={<Location/>} />
           <Route path="/sign-in/*" element={<SignIn />} />
           <Route path="/sign-up/*" element={<SignUp />} />
         </Routes>

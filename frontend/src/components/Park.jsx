@@ -14,6 +14,7 @@ function Park() {
     useEffect(() => {
         async function getPark() {
             const park = await axios.get(`http://localhost:3000/getPark/${id}`);
+            console.log(park.data);
             const reviews = await axios.get(`http://localhost:3000/getReviews/${id}`);
             park.data.actualReviews = reviews.data;
             setPark(park.data);
@@ -41,6 +42,7 @@ function Park() {
         <button onClick={() => navigate("/")}>Home</button><br></br><br></br>
         <div style={{backgroundColor: "aliceblue", color: "black", borderRadius: "10px", width: "60%", marginLeft: "20%"}}>
             <h2>{park.apiData.fullName}</h2>
+            <p>{park.apiData.addresses.length && `${park.apiData.addresses[0].line1}, ${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode} ${park.apiData.addresses[0].postalCode}`}</p>
 
             <Rating
                 readOnly

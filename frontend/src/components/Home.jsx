@@ -42,6 +42,7 @@ function Home() {
 
     return <div>
         <button onClick={() => navigate(`/search`)}>Search For Parks</button>
+        <button onClick={() => navigate(`/location`)}>Parks Near Me</button>
         <h1>Public Park Adventures</h1>
 
         <h4>Top Rated Parks</h4>
@@ -56,6 +57,7 @@ function Home() {
                     precision={0.1}
                 />
                 <h2>{park.apiData.fullName}</h2>
+                <p>{park.apiData.addresses.length && `${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode}`}</p>
                 <img width={200} src={park.apiData.images[0].url}></img><br></br>
                 <button onClick={() => navigate(`/park/${park.apiData.parkCode}`)}>More Info</button>
             </div>

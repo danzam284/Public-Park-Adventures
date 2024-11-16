@@ -8,15 +8,13 @@ import { useUser } from "@clerk/clerk-react";
 
 function limitDecimal(input) {
     const value = input.value;
+
+    input.value = input.value.replace(/[^1-5]/g, '');
     if (parseFloat(value) > 5) {
         input.value = 5;
     }
     if (parseFloat(value) < 0) {
         input.value = 0;
-    }
-
-    if (value.includes('.') && value.split('.')[1].length > 1) {
-        input.value = parseFloat(value).toFixed(1);
     }
 }
 
@@ -78,11 +76,11 @@ function Rate() {
                     }}
                 />
                 <div>
-                    <p>Cleanliness:  <input id="cleanliness" required type="number" min={0} max={5} step={0.1} onInput={(e) => limitDecimal(e.target)}></input></p>
-                    <p>Ammenities: <input id="ammenities" required type="number" min={0} max={5} step={0.1} onInput={(e) => limitDecimal(e.target)}></input></p>
-                    <p>Accessibility:  <input  id="accessibility"required type="number" min={0} max={5} step={0.1} onInput={(e) => limitDecimal(e.target)}></input></p>
-                    <p>Beauty: <input id="beauty" required type="number" min={0} max={5} step={0.1} onInput={(e) => limitDecimal(e.target)}></input></p>
-                    <p>Nature: <input id="nature" required type="number" min={0} max={5} step={0.1} onInput={(e) => limitDecimal(e.target)}></input></p>
+                    <p>Cleanliness:  <input id="cleanliness" required type="number" min={0} max={5} step={1} onInput={(e) => limitDecimal(e.target)}></input></p>
+                    <p>Ammenities: <input id="ammenities" required type="number" min={0} max={5} step={1} onInput={(e) => limitDecimal(e.target)}></input></p>
+                    <p>Accessibility:  <input  id="accessibility"required type="number" min={0} max={5} step={1} onInput={(e) => limitDecimal(e.target)}></input></p>
+                    <p>Beauty: <input id="beauty" required type="number" min={0} max={5} step={1} onInput={(e) => limitDecimal(e.target)}></input></p>
+                    <p>Nature: <input id="nature" required type="number" min={0} max={5} step={1} onInput={(e) => limitDecimal(e.target)}></input></p>
                 </div>
 
                 <TextField 

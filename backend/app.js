@@ -118,8 +118,18 @@ app.get("/getReviews/:id", async (req, res) => {
 
 app.get("/getTopParks", async (_, res) => {
     try {
-        let topParks = await parkData.getTopParks();
+        const topParks = await parkData.getTopParks();
         res.status(200).json(topParks.slice(0, 3));
+    } catch(e) {
+        console.log(e);
+        return res.status(400).send(e);
+    }
+});
+
+app.post("/findCloseParks", async (req, res) => {
+    try {
+        const closeParks = await parkData.getCloseParks(req.body.latitude, req.body.longitude);
+        res.status(200).json(closeParks.slice(0, 10));
     } catch(e) {
         console.log(e);
         return res.status(400).send(e);

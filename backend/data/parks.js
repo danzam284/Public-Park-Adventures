@@ -78,6 +78,30 @@ const getTopParks = async() => {
     return parks;
 }
 
+const getCloseParks = async (latitude, longitude) => {
+    const toRadians = (degree) => (degree * Math.PI) / 180;
+
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+        const R = 6371;
+        const dLat = toRadians(lat2 - lat1);
+        const dLon = toRadians(lon2 - lon1);
+        const a = 
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) + 
+            Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * 
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    const parks = await getParks();
+    parks.sort((a, b) => {
+        const distanceA = calculateDistance(latitude, longitude, parseFloat(a.apiData.latitude), parseFloat(a.apiData.longitude));
+        const distanceB = calculateDistance(latitude, longitude, parseFloat(b.apiData.latitude), parseFloat(b.apiData.longitude));
+        return distanceA - distanceB;
+    });
+    return parks;
+}
+
 const addReview = async (parkId, reviewId) => {
     let parkCollection;
     try {
@@ -160,4 +184,5 @@ export default {
     getParks,
     getReviews,
     getTopParks,
+    getCloseParks
 };
