@@ -78,6 +78,12 @@ const getTopParks = async() => {
     return parks;
 }
 
+const getSortedParksByCategory = async(category) => {
+    const parks = await getParks();
+    parks.sort((a, b) => ((b.ratings)[category])?.avg ?? 0 - ((a.ratings)[category])?.avg ?? 0);
+    return parks;
+}
+
 const getCloseParks = async (latitude, longitude) => {
     const toRadians = (degree) => (degree * Math.PI) / 180;
 
@@ -184,5 +190,6 @@ export default {
     getParks,
     getReviews,
     getTopParks,
+    getSortedParksByCategory,
     getCloseParks
 };
