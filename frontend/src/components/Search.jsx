@@ -3,17 +3,20 @@ import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import { Rating } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
+import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
+
 function Search() {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [noneFound, setNoneFound] = useState(false);
+    const [order, setOrder] = useState("overallRating");
     const navigate = useNavigate();
 
     const handleSearch = async () => {
         setNoneFound(false);
         try {
             const { data } = await axios.get("http://localhost:3000/searchPark", {
-                params: { query: searchQuery }
+                params: { query: searchQuery, sortOrder: order }
             });
 
             if (data.length === 0) {
@@ -26,17 +29,42 @@ function Search() {
     };
 
     return <div>
-        <button onClick={() => navigate("/")}>Home</button>
-        <h1>Search</h1>
+        <button onClick={() => navigate("/")}>Home</button><br></br><br></br><br></br><br></br>
         
-        <div style={{backgroundColor: "aliceblue", padding: "30px"}}>
-            <TextField
-                id="ratingTitle" 
-                label="Search For Parks" 
-                variant="outlined"
-                value={searchQuery} 
-                onChange={(e) => setSearchQuery(e.target.value)} 
-            /><br></br><br></br>
+        <div>
+
+            <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+
+                <TextField
+                    sx={{marginTop: "23px"}}
+                    id="ratingTitle" 
+                    label="Enter Search..."
+                    variant="outlined"
+                    value={searchQuery} 
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    helperText="Leave Empty to Search All"
+                />
+
+                <FormControl sx={{ m: 1, minWidth: 200 }}>
+                    <InputLabel>Order Results By</InputLabel>
+                    <Select
+                        defaultValue={"overallRating"}
+                        label="Order Results By"
+                        onChange={(e) => setOrder(e.target.value)}
+                    >
+                        <MenuItem value={"overallRating"}>Overall Rating</MenuItem>
+                        <MenuItem value={"cleanlinessRating"}>Cleanliness Rating</MenuItem>
+                        <MenuItem value={"ammenitiesRating"}>Ammenities Rating</MenuItem>
+                        <MenuItem value={"accessibilityRating"}>Accessibility Rating</MenuItem>
+                        <MenuItem value={"beautyRating"}>Beauty Rating</MenuItem>
+                        <MenuItem value={"natureRating"}>Nature Rating</MenuItem>
+
+                    </Select>
+                </FormControl>
+
+            </div>
+
+            <br></br>
             
             <button onClick={handleSearch}>Search</button>
         </div>

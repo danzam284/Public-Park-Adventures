@@ -55,6 +55,18 @@ const getParks = async () => {
     return await parkCollection.find({}).toArray();
 }
 
+const searchParks = async(searchQuery, orderBy) => {
+    const parks = await getSortedParksByCategory(orderBy);
+    const queryRegex = new RegExp(searchQuery, 'i');
+    const filteredParks = parks.filter((park) => {
+        return (
+            queryRegex.test(park.apiData.fullName) ||
+            queryRegex.test(park.apiData.description)
+        );
+    });
+    return filteredParks;
+}
+
 const getReviews = async(id) => {
     validation.checkNull(id);
     const reviews = [];
@@ -74,13 +86,13 @@ const getReviews = async(id) => {
 
 const getTopParks = async() => {
     const parks = await getParks();
-    parks.sort((a, b) => b.ratings.overallRating?.avg ?? 0 - a.ratings.overallRating?.avg ?? 0);
+    parks.sort((a, b) => (b.ratings.overallRating?.avg ?? 0) - (a.ratings.overallRating?.avg ?? 0));
     return parks;
 }
 
 const getSortedParksByCategory = async(category) => {
     const parks = await getParks();
-    parks.sort((a, b) => ((b.ratings)[category])?.avg ?? 0 - ((a.ratings)[category])?.avg ?? 0);
+    parks.sort((a, b) => (b.ratings[category]?.avg ?? 0) - (a.ratings[category]?.avg ?? 0))
     return parks;
 }
 
@@ -191,5 +203,6 @@ export default {
     getReviews,
     getTopParks,
     getSortedParksByCategory,
-    getCloseParks
+    getCloseParks,
+    searchParks
 };

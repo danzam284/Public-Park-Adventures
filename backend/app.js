@@ -137,25 +137,14 @@ app.post("/findCloseParks", async (req, res) => {
 });
 
 app.get("/searchPark", async (req, res) => {
-    const { query } = req.query;
-
-    if (!query) {
-        return res.status(400).send("Query parameter is required");
-    }
+    const { query, sortOrder } = req.query;
 
     try {
-        const parks = await parkData.getParks();
-        const queryRegex = new RegExp(query, 'i');
-        const filteredParks = parks.filter((park) => {
-            return (
-                queryRegex.test(park.apiData.fullName) ||
-                queryRegex.test(park.apiData.description)
-            );
-        });
-        return res.status(200).json(filteredParks);
+        const parks = await parkData.searchParks(query, sortOrder);
+        return res.status(200).json(parks);
     } catch (error) {
         console.error(error);
-        return res.status(500).send("apps.js: An error occurred while searching for parks");
+        return res.status(500).send("An error occurred while searching for parks");
     }
 });
 // rhasan1 - 10/30/2024 - Added a searchPark endpoint to search for parks by name

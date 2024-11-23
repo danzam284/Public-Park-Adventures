@@ -45,3 +45,23 @@
 .hoverIcon {
   cursor: pointer;
 }
+
+.css-sc8y68-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root {
+  color: white !important;
+}
+.css-113d811-MuiFormLabel-root-MuiInputLabel-root {
+  color: rgb(255, 255, 255, 0.6) !important;
+}
+.css-1ll44ll-MuiOutlinedInput-notchedOutline {
+  border-color: rgb(255, 255, 255, 0.6) !important;
+}
+.css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root {
+  color: rgb(255, 255, 255, 0.6) !important;
+}
+.css-quhxjy-MuiInputBase-root-MuiOutlinedInput-root {
+  color: white !important;
+}
+.css-er619e-MuiFormHelperText-root {
+  color: rgb(53, 53, 245) !important;
+  text-align: center !important;
+}
