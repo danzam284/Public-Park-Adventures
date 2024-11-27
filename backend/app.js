@@ -141,7 +141,7 @@ app.get("/searchPark", async (req, res) => {
 
     try {
         const parks = await parkData.searchParks(query, sortOrder);
-        return res.status(200).json(parks);
+        return res.status(200).json(parks.slice(0, 30));
     } catch (error) {
         console.error(error);
         return res.status(500).send("An error occurred while searching for parks");
