@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import { Rating } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 
 function Search() {
@@ -11,12 +11,25 @@ function Search() {
     const [noneFound, setNoneFound] = useState(false);
     const [order, setOrder] = useState("overallRating");
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    const handleSearch = async () => {
+    useEffect(() => {
+        const query = searchParams.get("query") || '';
+        const sortOrder = searchParams.get("sortOrder") || 'overallRating';
+
+        setSearchQuery(query);
+        setOrder(sortOrder);
+
+        if (query || sortOrder) {
+            handleSearch(query, sortOrder);
+        }
+    }, [searchParams]);
+
+    const handleSearch = async (query=searchQuery, sortOrder=order) => {
         setNoneFound(false);
         try {
             const { data } = await axios.get("http://localhost:3000/searchPark", {
-                params: { query: searchQuery, sortOrder: order }
+                params: { query, sortOrder }
             });
 
             if (data.length === 0) {
@@ -26,6 +39,11 @@ function Search() {
         } catch (error) {
             console.error("Error searching for parks:", error);
         }
+    };
+
+    const handleSearchClick = () => {
+        setSearchParams({ query: searchQuery, sortOrder: order });
+        handleSearch();
     };
 
     return <div>
@@ -66,7 +84,7 @@ function Search() {
 
             <br></br>
             
-            <button onClick={handleSearch}>Search</button>
+            <button onClick={handleSearchClick}>Search</button>
         </div>
 
         {/* Display Search Results */}
