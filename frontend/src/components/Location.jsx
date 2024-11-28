@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Rating } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function Location() {
     const [parks, setParks] = useState(null);
@@ -51,37 +53,70 @@ function Location() {
     }, []);
 
     return (
-        <div>
-            <button onClick={() => navigate("/")}>Home</button>
-            <h2>Parks Near Me</h2>
-            {parks ? (
-                parks.map((park) => (
-                    <div key={park._id}>
-                        <div style={{backgroundColor: "aliceblue", color: "black", borderRadius: "10px"}}>
-                            <Rating
-                                readOnly
-                                size="large"
-                                name="overall-rating"
-                                value={park.ratings.overallRating?.avg ?? 0}
-                                precision={0.1}
-                            />
-                            <h2>{park.apiData.fullName}</h2>
-                            <p>{park.apiData.addresses.length && `${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode}`}</p>
-                            <p>{park.distance.toFixed(2)} miles away</p>
-                            <img width={200} src={park.apiData.images[0].url}></img><br></br>
-                            <button onClick={() => navigate(`/park/${park.apiData.parkCode}`)}>More Info</button>
-                            <br></br><br></br>
-                        </div><br></br><br></br>
-                    </div>
-                ))
-            ) : error ? (
-                <div>
-                    <h2>Error:</h2>
-                    <p>{error}</p>
+        <div className="container">
+            <div className="header-nav">
+                <button onClick={() => navigate("/")} className="back-button">
+                    Home
+                </button>
+            </div>
+
+            <div className="location-container">
+                <div className="location-header">
+                    <LocationOnIcon className="location-icon" />
+                    <h1>Parks Near Me</h1>
                 </div>
-            ) : (
-                <p>Fetching location...</p>
-            )}
+
+                {parks ? (
+                    <div className="parks-grid">
+                        {parks.map((park) => (
+                            <div key={park._id} className="park-card location-card">
+                                <div className="park-image">
+                                    <img 
+                                        src={park.apiData.images[0].url} 
+                                        alt={park.apiData.fullName}
+                                    />
+                                    <div className="distance-badge">
+                                        {park.distance.toFixed(1)} miles
+                                    </div>
+                                </div>
+                                <div className="park-content">
+                                    <Rating
+                                        readOnly
+                                        size="large"
+                                        name="overall-rating"
+                                        value={park.ratings.overallRating?.avg ?? 0}
+                                        precision={0.1}
+                                    />
+                                    <h3>{park.apiData.fullName}</h3>
+                                    <p className="park-location">
+                                        {park.apiData.addresses.length && 
+                                            `${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode}`}
+                                    </p>
+                                    <button 
+                                        onClick={() => navigate(`/park/${park.apiData.parkCode}`)}
+                                        className="details-button"
+                                    >
+                                        More Info
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : error ? (
+                    <div className="error-container">
+                        <h2>Location Error</h2>
+                        <p>{error}</p>
+                        <button onClick={() => navigate("/search")}>
+                            Search Parks Instead
+                        </button>
+                    </div>
+                ) : (
+                    <div className="loading-container">
+                        <CircularProgress size={60} />
+                        <p>Finding parks near you...</p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

@@ -40,27 +40,37 @@ function Home() {
         return "Loading..."
     }
 
-    return <div>
-        <button onClick={() => navigate(`/search`)}>Search For Parks</button>
-        <button onClick={() => navigate(`/location`)}>Parks Near Me</button>
-        <h1>Public Park Adventures</h1>
-
-        <h4>Top Rated Parks</h4>
-        <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+    return <div className="container">
+        <div className="header-buttons">
+            <button onClick={() => navigate(`/search`)}>Search For Parks</button>
+            <button onClick={() => navigate(`/location`)}>Parks Near Me</button>
+        </div>
+        
+        <h1 className="main-title">Public Park Adventures</h1>
+        
+        <h2>Top Rated Parks</h2>
+        <div className="grid">
             {parks.map((park) => (
-                <div key={park._id} style={{backgroundColor: "aliceblue", color: "black", borderRadius: "10px", width: "30%", height: "450px", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-                <Rating
-                    readOnly
-                    size="large"
-                    name="overall-rating"
-                    value={park.ratings?.overallRating?.avg ?? 0}
-                    precision={0.1}
-                />
-                <h2>{park.apiData.fullName}</h2>
-                <p>{park.apiData.addresses.length && `${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode}`}</p>
-                <img width={200} src={park.apiData.images[0].url}></img><br></br>
-                <button onClick={() => navigate(`/park/${park.apiData.parkCode}`)}>More Info</button>
-            </div>
+                <div key={park._id} className="card park-card">
+                    <Rating
+                        readOnly
+                        size="large"
+                        name="overall-rating"
+                        value={park.ratings?.overallRating?.avg ?? 0}
+                        precision={0.1}
+                    />
+                    <h3>{park.apiData.fullName}</h3>
+                    <p className="park-location">
+                        {park.apiData.addresses.length && 
+                            `${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode}`}
+                    </p>
+                    <div className="park-image">
+                        <img src={park.apiData.images[0].url} alt={park.apiData.fullName} />
+                    </div>
+                    <button onClick={() => navigate(`/park/${park.apiData.parkCode}`)}>
+                        More Info
+                    </button>
+                </div>
             ))}
         </div>
     </div>

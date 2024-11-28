@@ -46,73 +46,102 @@ function Search() {
         handleSearch();
     };
 
-    return <div>
-        <button onClick={() => navigate("/")}>Home</button><br></br><br></br><br></br><br></br>
-        
-        <div>
+    return (
+        <div className="container">
+            <div className="header-nav">
+                <button onClick={() => navigate("/")} className="back-button">
+                    Home
+                </button>
+            </div>
 
-            <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+            <div className="search-container">
+                <h1>Search Parks</h1>
+                
+                <div className="search-controls">
+                    <TextField
+                        className="search-input"
+                        id="search-field" 
+                        label="Search Parks"
+                        variant="outlined"
+                        value={searchQuery} 
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        helperText="Enter park name, city, or state (leave empty to see all parks)"
+                        placeholder="e.g., Yellowstone, New York, California..."
+                        fullWidth
+                    />
 
-                <TextField
-                    sx={{marginTop: "23px"}}
-                    id="ratingTitle" 
-                    label="Enter Search..."
-                    variant="outlined"
-                    value={searchQuery} 
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    helperText="Leave Empty to Search All"
-                />
+                    <FormControl className="sort-control">
+                        <InputLabel>Order Results By</InputLabel>
+                        <Select
+                            value={order}
+                            label="Order Results By"
+                            onChange={(e) => setOrder(e.target.value)}
+                        >
+                            <MenuItem value={"overallRating"}>Overall Rating</MenuItem>
+                            <MenuItem value={"cleanlinessRating"}>Cleanliness Rating</MenuItem>
+                            <MenuItem value={"ammenitiesRating"}>Amenities Rating</MenuItem>
+                            <MenuItem value={"accessibilityRating"}>Accessibility Rating</MenuItem>
+                            <MenuItem value={"beautyRating"}>Beauty Rating</MenuItem>
+                            <MenuItem value={"natureRating"}>Nature Rating</MenuItem>
+                        </Select>
+                    </FormControl>
 
-                <FormControl sx={{ m: 1, minWidth: 200 }}>
-                    <InputLabel>Order Results By</InputLabel>
-                    <Select
-                        defaultValue={"overallRating"}
-                        label="Order Results By"
-                        onChange={(e) => setOrder(e.target.value)}
+                    <button 
+                        onClick={handleSearchClick}
+                        className="search-button"
                     >
-                        <MenuItem value={"overallRating"}>Overall Rating</MenuItem>
-                        <MenuItem value={"cleanlinessRating"}>Cleanliness Rating</MenuItem>
-                        <MenuItem value={"ammenitiesRating"}>Ammenities Rating</MenuItem>
-                        <MenuItem value={"accessibilityRating"}>Accessibility Rating</MenuItem>
-                        <MenuItem value={"beautyRating"}>Beauty Rating</MenuItem>
-                        <MenuItem value={"natureRating"}>Nature Rating</MenuItem>
+                        Search Parks
+                    </button>
+                </div>
 
-                    </Select>
-                </FormControl>
-
-            </div>
-
-            <br></br>
-            
-            <button onClick={handleSearchClick}>Search</button>
-        </div>
-
-        {/* Display Search Results */}
-        {noneFound && "No results found"}
-        {searchResults.length > 0 && (
-            <div>
-                <h2>Search Results</h2>
-                {searchResults.map((park) => (
-                    <div key={park._id}>
-                        <div style={{backgroundColor: "aliceblue", color: "black", borderRadius: "10px"}}>
-                            <Rating
-                                readOnly
-                                size="large"
-                                name="overall-rating"
-                                value={park.ratings.overallRating?.avg ?? 0}
-                                precision={0.1}
-                            />
-                            <h2>{park.apiData.fullName}</h2>
-                            <p>{park.apiData.addresses.length && `${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode}`}</p>
-                            <img width={200} src={park.apiData.images[0].url}></img><br></br>
-                            <button onClick={() => navigate(`/park/${park.apiData.parkCode}`)}>More Info</button>
-                            <br></br><br></br>
-                        </div><br></br><br></br>
+                {/* Display Search Results */}
+                {noneFound && (
+                    <div className="no-results">
+                        <h2>No parks found matching your search</h2>
+                        <p>Try adjusting your search terms or browse all parks</p>
                     </div>
-                ))}
+                )}
+                
+                {searchResults.length > 0 && (
+                    <div className="search-results">
+                        <h2>Search Results</h2>
+                        <div className="parks-grid">
+                            {searchResults.map((park) => (
+                                <div key={park._id} className="park-card">
+                                    <div className="park-image">
+                                        <img 
+                                            src={park.apiData.images[0].url} 
+                                            alt={park.apiData.fullName}
+                                        />
+                                    </div>
+                                    <div className="park-content">
+                                        <Rating
+                                            readOnly
+                                            size="large"
+                                            name="overall-rating"
+                                            value={park.ratings.overallRating?.avg ?? 0}
+                                            precision={0.1}
+                                        />
+                                        <h3>{park.apiData.fullName}</h3>
+                                        <p className="park-location">
+                                            {park.apiData.addresses.length && 
+                                                `${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode}`}
+                                        </p>
+                                        <button 
+                                            onClick={() => navigate(`/park/${park.apiData.parkCode}`)}
+                                            className="details-button"
+                                        >
+                                            More Info
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
-        )}
-    </div>
+        </div>
+    );
 }
 
 export default Search;

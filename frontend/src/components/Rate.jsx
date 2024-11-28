@@ -5,96 +5,162 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import axios from "axios";
 import { useUser } from "@clerk/clerk-react";
-
-function limitDecimal(input) {
-    const value = input.value;
-
-    input.value = input.value.replace(/[^1-5]/g, '');
-    if (parseFloat(value) > 5) {
-        input.value = 5;
-    }
-    if (parseFloat(value) < 0) {
-        input.value = 0;
-    }
-}
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 function Rate() {
     const location = useLocation();
     const navigate = useNavigate();
     const { user } = useUser();
+    const [error, setError] = useState("");
+    const [ratings, setRatings] = useState({
+        overall: 2.5,
+        cleanliness: 0,
+        amenities: 0,
+        accessibility: 0,
+        beauty: 0,
+        nature: 0
+    });
+
+    // Redirect if no park data
+    if (!location.state) {
+        navigate('/');
+        return null;
+    }
+
     const park = location.state;
-    const [rating, setRating] = useState(2.5)
-    const [submitted, setSubmitted] = useState(false);
+
+    const handleRatingChange = (category, value) => {
+        setRatings(prev => ({
+            ...prev,
+            [category]: value
+        }));
+    };
 
     async function submitReview(e) {
         e.preventDefault();
         try {
-            await axios.post("http://localhost:3000/newReview",
-                {
-                    reviewerId: user.id,
-                    parkId: park.parkCode,
-                    ratings: {
-                        overallRating: parseFloat(rating),
-                        cleanlinessRating: parseFloat(document.getElementById("cleanliness").value),
-                        ammenitiesRating: parseFloat(document.getElementById("ammenities").value),
-                        accessibilityRating: parseFloat(document.getElementById("accessibility").value),
-                        beautyRating: parseFloat(document.getElementById("beauty").value),
-                        natureRating: parseFloat(document.getElementById("nature").value)
-                    },
-                    reviewTitle: document.getElementById("ratingTitle").value,
-                    comments: document.getElementById("comments").value
-                }
-            );
-            setSubmitted(true);
+            const formData = {
+                reviewerId: user.id,
+                parkId: park.parkCode,
+                ratings: {
+                    overallRating: ratings.overall,
+                    cleanlinessRating: ratings.cleanliness,
+                    ammenitiesRating: ratings.amenities,
+                    accessibilityRating: ratings.accessibility,
+                    beautyRating: ratings.beauty,
+                    natureRating: ratings.nature
+                },
+                reviewTitle: e.target.ratingTitle.value.trim(),
+                comments: e.target.comments.value.trim()
+            };
+
+            // Validate ratings
+            if (Object.values(ratings).some(rating => rating === 0)) {
+                setError("Please provide all ratings");
+                return;
+            }
+
+            await axios.post("http://localhost:3000/newReview", formData);
+            navigate(`/park/${park.parkCode}`);
         } catch(e) {
-            console.log(e);
+            setError(e.response?.data?.message || "An error occurred while submitting the review");
+            console.error(e);
         }
     }
 
-    if (submitted) {
-        navigate(`/park/${park.parkCode}`)
-    }
-    return <div>
-        <button onClick={() => navigate("/")}>Home</button><br></br><br></br>
-        <div style={{backgroundColor: "aliceblue", color: "black", padding: "20px", borderRadius: "10px"}}>
-            <h2>Reviewing {park.fullName}</h2><br></br>
+    return (
+        <div className="container">
+            <div className="header-nav">
+                <button onClick={() => navigate("/")} className="back-button">
+                    Back to Home
+                </button>
+            </div>
 
-            <form onSubmit={async (e) => await submitReview(e)}>
-                <TextField 
-                    required
-                    id="ratingTitle" 
-                    label="Review Title" 
-                    variant="outlined"
-                /><br></br><br></br>
-                <Rating
-                    size="large"
-                    name="overall-rating"
-                    value={rating}
-                    precision={0.1}
-                    onChange={(_, newValue) => {
-                        setRating(newValue);
-                    }}
-                />
-                <div>
-                    <p>Cleanliness:  <input id="cleanliness" required type="number" min={0} max={5} step={1} onInput={(e) => limitDecimal(e.target)}></input></p>
-                    <p>Ammenities: <input id="ammenities" required type="number" min={0} max={5} step={1} onInput={(e) => limitDecimal(e.target)}></input></p>
-                    <p>Accessibility:  <input  id="accessibility"required type="number" min={0} max={5} step={1} onInput={(e) => limitDecimal(e.target)}></input></p>
-                    <p>Beauty: <input id="beauty" required type="number" min={0} max={5} step={1} onInput={(e) => limitDecimal(e.target)}></input></p>
-                    <p>Nature: <input id="nature" required type="number" min={0} max={5} step={1} onInput={(e) => limitDecimal(e.target)}></input></p>
-                </div>
+            <div className="review-form-container">
+                <h2>Review {park.fullName}</h2>
 
-                <TextField 
-                    multiline
-                    id="comments" 
-                    label="Enter comments" 
-                    variant="outlined"
-                    rows={5}
-                    sx={{width: "70%"}}
-                /><br></br><br></br>
-                <Button type="submit" variant="contained">Submit</Button>
-            </form>
+                <form onSubmit={submitReview} className="review-form">
+                    <div className="form-group">
+                        <TextField 
+                            required
+                            id="ratingTitle" 
+                            label="Review Title" 
+                            variant="outlined"
+                            fullWidth
+                            placeholder="e.g., Great Family Experience, Beautiful Hiking Trails..."
+                            helperText="Give your review a descriptive title"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Overall Rating</label>
+                        <Rating
+                            size="large"
+                            name="overall-rating"
+                            value={ratings.overall}
+                            precision={0.5}
+                            onChange={(_, value) => handleRatingChange('overall', value)}
+                        />
+                    </div>
+
+                    <div className="ratings-grid">
+                        {[
+                            { id: 'cleanliness', label: 'Cleanliness' },
+                            { id: 'amenities', label: 'Amenities' },
+                            { id: 'accessibility', label: 'Accessibility' },
+                            { id: 'beauty', label: 'Beauty' },
+                            { id: 'nature', label: 'Nature' }
+                        ].map(({ id, label }) => (
+                            <div key={id} className="rating-item">
+                                <label htmlFor={id}>{label}</label>
+                                <Rating
+                                    id={id}
+                                    size="medium"
+                                    value={ratings[id]}
+                                    onChange={(_, value) => handleRatingChange(id, value)}
+                                    precision={0.5}
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="form-group">
+                        <TextField 
+                            multiline
+                            required
+                            id="comments" 
+                            label="Your Review" 
+                            variant="outlined"
+                            rows={5}
+                            fullWidth
+                            placeholder="Share details about your experience: What did you enjoy? What activities did you do? Would you recommend it to others?"
+                            helperText="Minimum 10 characters"
+                        />
+                    </div>
+
+                    <Button 
+                        type="submit" 
+                        variant="contained" 
+                        className="submit-button"
+                        fullWidth
+                    >
+                        Submit Review
+                    </Button>
+                </form>
+            </div>
+
+            <Snackbar 
+                open={!!error} 
+                autoHideDuration={6000} 
+                onClose={() => setError("")}
+            >
+                <Alert severity="error" onClose={() => setError("")}>
+                    {error}
+                </Alert>
+            </Snackbar>
         </div>
-    </div>
+    );
 }
 
 export default Rate;

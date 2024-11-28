@@ -38,130 +38,74 @@ function Park() {
         return "Loading...";
     }
 
-    return <div>
-        <button onClick={() => navigate("/")}>Home</button><br></br><br></br>
-        <div style={{backgroundColor: "aliceblue", color: "black", borderRadius: "10px", width: "60%", marginLeft: "20%"}}>
-            <h2>{park.apiData.fullName}</h2>
-            <p>{park.apiData.addresses.length && `${park.apiData.addresses[0].line1}, ${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode} ${park.apiData.addresses[0].postalCode}`}</p>
+    return <div className="container">
+        <button onClick={() => navigate("/")} className="back-button">
+            Back to Home
+        </button>
+        
+        <div className="park-details card">
+            <div className="park-header">
+                <h1>{park.apiData.fullName}</h1>
+                <p className="park-location">
+                    {park.apiData.addresses.length && 
+                        `${park.apiData.addresses[0].line1}, ${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode} ${park.apiData.addresses[0].postalCode}`}
+                </p>
+                
+                <Rating
+                    readOnly
+                    size="large"
+                    name="overall-rating"
+                    value={park.ratings.overallRating?.avg ?? 0}
+                    precision={0.1}
+                />
+            </div>
 
-            <Rating
-                readOnly
-                size="large"
-                name="overall-rating"
-                value={park.ratings.overallRating?.avg ?? 0}
-                precision={0.1}
-            /><br></br>
-
-            <div style={{display: "flex", justifyContent: "center", alignItems: "center", gap: "10px"}}>
+            <div className="park-gallery-container">
                 <ChevronLeftIcon
+                    className="gallery-nav prev"
                     onClick={moveBackImage}
-                    className="hoverIcon"
-                    fontSize="large"
-                    style={{backgroundColor: "darkgray", borderRadius: "50%"}}
                 />
-                <img height={300} src={park.apiData.images[imageIndex].url}></img><br></br>
-                <ChevronRightIcon
-                    onClick={moveForwardImage}
-                    className="hoverIcon"
-                    fontSize="large"
-                    style={{backgroundColor: "darkgray", borderRadius: "50%"}}
-                />
-            </div><br></br>
-
-
-            <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Cleanliness <Rating
-                readOnly
-                size="small"
-                name="cleanliness-rating"
-                value={park.ratings.cleanlinessRating?.avg ?? 0}
-                precision={0.1}
-            /></p>
-            <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Ammenities <Rating
-                readOnly
-                size="small"
-                name="ammenities-rating"
-                value={park.ratings.ammenitiesRating?.avg ?? 0}
-                precision={0.1}
-            /></p>
-            <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Accessibility <Rating
-                readOnly
-                size="small"
-                name="accessibility-rating"
-                value={park.ratings.accessibilityRating?.avg ?? 0}
-                precision={0.1}
-            /></p>
-            <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Beauty <Rating
-                readOnly
-                size="small"
-                name="beauty-rating"
-                value={park.ratings.beautyRating?.avg ?? 0}
-                precision={0.1}
-            /></p>
-            <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Nature <Rating
-                readOnly
-                size="small"
-                name="nature-rating"
-                value={park.ratings.natureRating?.avg ?? 0}
-                precision={0.1}
-            /></p>
-
-            <button onClick={() => navigate("/rate", { state: park.apiData })}>Review This Park</button>
-            <p style={{padding: "10px"}}>{park.apiData.description}</p>
-
-            <h3>Reviews</h3>
-            {park.actualReviews.length === 0 && <p>This park has no reviews.</p>}
-            {park.actualReviews.map((review) => (
-                <div key={review._id}>
-                    <hr></hr>
-                    <Rating
-                        readOnly
-                        size="large"
-                        name="overall-rating"
-                        value={review.ratings.overallRating}
-                        precision={0.1}
+                <div className="park-gallery">
+                    <img 
+                        src={park.apiData.images[imageIndex].url}
+                        alt={park.apiData.fullName}
+                        className="gallery-image"
                     />
-                    <h4>{review.title}</h4>
-                    <p>{review.text}</p>
-
-
-                    <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Cleanliness <Rating
-                        readOnly
-                        size="small"
-                        name="cleanliness-rating"
-                        value={review.ratings.cleanlinessRating}
-                        precision={0.1}
-                    /></p>
-                    <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Ammenities <Rating
-                        readOnly
-                        size="small"
-                        name="ammenities-rating"
-                        value={review.ratings.ammenitiesRating}
-                        precision={0.1}
-                    /></p>
-                    <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Accessibility <Rating
-                        readOnly
-                        size="small"
-                        name="accessibility-rating"
-                        value={review.ratings.accessibilityRating}
-                        precision={0.1}
-                    /></p>
-                    <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Beauty <Rating
-                        readOnly
-                        size="small"
-                        name="beauty-rating"
-                        value={review.ratings.beautyRating}
-                        precision={0.1}
-                    /></p>
-                    <p style={{display: "flex", alignItems: "center", justifyContent: "center"}}>Nature <Rating
-                        readOnly
-                        size="small"
-                        name="nature-rating"
-                        value={review.ratings.natureRating}
-                        precision={0.1}
-                    /></p>
                 </div>
-            ))}
+                <ChevronRightIcon
+                    className="gallery-nav next"
+                    onClick={moveForwardImage}
+                />
+            </div>
 
+            <div className="park-ratings">
+                {[
+                    { label: "Cleanliness", value: park.ratings.cleanlinessRating?.avg ?? 0 },
+                    { label: "Amenities", value: park.ratings.ammenitiesRating?.avg ?? 0 },
+                    { label: "Accessibility", value: park.ratings.accessibilityRating?.avg ?? 0 },
+                    { label: "Beauty", value: park.ratings.beautyRating?.avg ?? 0 },
+                    { label: "Nature", value: park.ratings.natureRating?.avg ?? 0 }
+                ].map(rating => (
+                    <div key={rating.label} className="rating-item">
+                        <span className="rating-label">{rating.label}</span>
+                        <Rating
+                            readOnly
+                            size="small"
+                            value={rating.value}
+                            precision={0.1}
+                        />
+                    </div>
+                ))}
+            </div>
+
+            <button 
+                onClick={() => navigate("/rate", { state: park.apiData })}
+                className="review-button"
+            >
+                Write a Review
+            </button>
+
+            <p className="park-description">{park.apiData.description}</p>
         </div>
     </div>
 }
