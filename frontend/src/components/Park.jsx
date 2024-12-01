@@ -50,6 +50,8 @@ function Park() {
                     {park.apiData.addresses.length && 
                         `${park.apiData.addresses[0].line1}, ${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode} ${park.apiData.addresses[0].postalCode}`}
                 </p>
+
+                <p className="park-description">{park.apiData.description}</p>
                 
                 <Rating
                     readOnly
@@ -58,6 +60,26 @@ function Park() {
                     value={park.ratings.overallRating?.avg ?? 0}
                     precision={0.1}
                 />
+            </div>
+
+            <div className="park-ratings">
+                {[
+                    { label: "Cleanliness", value: park.ratings.cleanlinessRating?.avg ?? 0 },
+                    { label: "Amenities", value: park.ratings.ammenitiesRating?.avg ?? 0 },
+                    { label: "Accessibility", value: park.ratings.accessibilityRating?.avg ?? 0 },
+                    { label: "Beauty", value: park.ratings.beautyRating?.avg ?? 0 },
+                    { label: "Nature", value: park.ratings.natureRating?.avg ?? 0 }
+                ].map(rating => (
+                    <div key={rating.label} className="rating-item">
+                    <span className="rating-label">{rating.label}</span>
+                    <Rating
+                        readOnly
+                        size="small"
+                        value={rating.value}
+                        precision={0.1}
+                    />
+                    </div>
+                ))}
             </div>
 
             <div className="park-gallery-container">
@@ -78,26 +100,6 @@ function Park() {
                 />
             </div>
 
-            <div className="park-ratings">
-                {[
-                    { label: "Cleanliness", value: park.ratings.cleanlinessRating?.avg ?? 0 },
-                    { label: "Amenities", value: park.ratings.ammenitiesRating?.avg ?? 0 },
-                    { label: "Accessibility", value: park.ratings.accessibilityRating?.avg ?? 0 },
-                    { label: "Beauty", value: park.ratings.beautyRating?.avg ?? 0 },
-                    { label: "Nature", value: park.ratings.natureRating?.avg ?? 0 }
-                ].map(rating => (
-                    <div key={rating.label} className="rating-item">
-                        <span className="rating-label">{rating.label}</span>
-                        <Rating
-                            readOnly
-                            size="small"
-                            value={rating.value}
-                            precision={0.1}
-                        />
-                    </div>
-                ))}
-            </div>
-
             <button 
                 onClick={() => navigate("/rate", { state: park.apiData })}
                 className="review-button"
@@ -105,7 +107,29 @@ function Park() {
                 Write a Review
             </button>
 
-            <p className="park-description">{park.apiData.description}</p>
+            {park.actualReviews.length > 0 ?
+                <div>
+                    <hr></hr>
+                    <h2> Reviews </h2>
+                    <div className="reviews">
+                        {park.actualReviews.map(review =>
+                            <div className="review card">
+                                <Rating
+                                    readOnly
+                                    size="small"
+                                    value={review.ratings.overallRating}
+                                    precision={0.1}
+                                />
+                                <br />
+                                <b>{review.title}</b>
+                                <p>{review.text}</p>
+                            </div>
+                        )}
+                    </div>
+                </div>:
+                <div></div>
+            }
+
         </div>
     </div>
 }

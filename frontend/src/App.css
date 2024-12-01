@@ -645,3 +645,24 @@
   margin: 40px auto;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.reviews {
+  display: flex;
+  justify-content: left;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.review {
+  flex: 1 1 200px;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  text-align: center !important;
+  border: 1px solid black;
+  word-wrap: break-word;
+  min-width: 150px !important;
+  max-height: 500px !important;
+  margin-top: 10px !important;
+  margin-bottom: 0px !important;
+  margin-left: 10px !important;
+  margin-right: 0px !important;
+}
