@@ -645,3 +645,27 @@
   margin: 40px auto;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.reviews {
+  display: flex;
+  justify-content: left;
+  padding: 0px !important;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+  margin-bottom: 0px !important;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.review {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  text-align:center !important;
+  border: 1px solid black;
+  word-wrap: break-word;
+  width: calc( 100% / 3 - 60px) !important; /* Maybe we can change to max-width depending on our aesthetic preferences. */
+  min-width: 120px !important;
+  max-height: 400px !important;
+  margin-top: 10px !important;
+  margin-left: 10px !important;
+  padding: 0px;
+}
