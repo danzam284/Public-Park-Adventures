@@ -75,12 +75,7 @@ function Search() {
                         <Select
                             value={order}
                             label="Order Results By"
-                            onChange={(e) =>
-                                {
-                                    setOrder(e.target.value);
-                                    handleSearch();
-                                }
-                            }
+                            onChange={(e) => setOrder(e.target.value)}
                         >
                             <MenuItem value={"overallRating"}>Overall Rating</MenuItem>
                             <MenuItem value={"cleanlinessRating"}>Cleanliness Rating</MenuItem>
