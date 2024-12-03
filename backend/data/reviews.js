@@ -52,8 +52,10 @@ const create = async (
     if (!newInsertInformation.insertedId) throw "Insert failed";
 
     let _id = newInsertInformation.insertedId.toString();
+
     await userData.addReview(userId, _id);
     await parkData.addReview(parkId, _id);
+
     return await getByID(_id);
 };
 
@@ -69,10 +71,10 @@ const getByID = async (id) => {
 
 const remove = async (id) => {
     id = validation.checkId(id);
-    let review = getByID(id);
+    let review = await getByID(id);
 
-    userData.removeReview(userId, id);
-    parkData.removeReview(parkId, id);
+    await userData.removeReview(review.userId, id);
+    await parkData.removeReview(review.parkId, id);
 
     const reviewCollection = await reviews();
 
@@ -118,15 +120,18 @@ const update = async (id, ratings, title, text, image) => {
     if (image)
         newReview.image = image;
 
-    const userCollection = await users();
-
     let updateReview = await reviewCollection.updateOne(
         { _id: id },
         { $set: newReview }
     );
-
     if (!updateReview) throw "Error: Review could not be updated";
-    return await getByID(id);
+
+    let review = await getByID(id);
+
+    await userData.removeReview(review.userId, id);
+    await parkData.removeReview(review.parkId, id);
+
+    return review;
 };
 
 const findHelpful = async (id) => {
