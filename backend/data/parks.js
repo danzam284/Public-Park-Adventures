@@ -193,12 +193,18 @@ const removeReview = async (parkId, reviewId) => {
     );
 }
 
+const updateReview = async (parkId, reviewId) => {
+    await removeReview(parkId, reviewId); // The simplest solution is doing what the user would've done, but on the backend.
+    await addReview(parkId, reviewId); // Especially since we do not store the past ratings for each review in the aggregates, this is almost certainly the ONLY way without a refactor.
+}
+
 export default {
     create,
     update,
     getByID,
     addReview,
     removeReview,
+    updateReview,
     getParks,
     getReviews,
     getTopParks,
