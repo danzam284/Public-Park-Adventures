@@ -687,11 +687,20 @@
   float: center;
   display: inline;
   padding: 10px;
+  font-size:20px;
 }
 
 .PFP {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
+  float: center;
+  display: inline;
+  border-radius: 50%;
+}
+
+.PFP_HOME {
+  width: 40px;
+  height: 40px;
   float: center;
   display: inline;
   border-radius: 50%;
