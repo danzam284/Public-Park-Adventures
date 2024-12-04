@@ -68,7 +68,7 @@ app.post("/newUser", async (req, _) => {
     const exists = await userExists(req.body.id);
     if (!exists) {
         //createUser(req.body.id, req.body.email, req.body.username, req.body.profilePicture);
-        userData.create(req.body.id, req.body.email, req.body.username, req.body.profilePicture, req.body.password);
+        await userData.create(req.body.id, req.body.email, req.body.username, req.body.profilePicture, req.body.password);
     }
 });
 
@@ -92,6 +92,16 @@ app.get("/getParks", async (_, res) => {
     try {
         res.status(200).json(await parkData.getParks());
     } catch(e) {
+        return res.status(400).send(e);
+    }
+});
+
+app.get("/getUser/:id", async (req, res) => {
+    try {
+        const user = await userData.getByID(req.params.id.trim());
+        res.status(200).json(user);
+    } catch(e) {
+        console.log(e);
         return res.status(400).send(e);
     }
 });
