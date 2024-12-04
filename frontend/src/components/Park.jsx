@@ -17,6 +17,11 @@ function Park() {
             console.log(park.data);
             const reviews = await axios.get(`http://localhost:3000/getReviews/${id}`);
             park.data.actualReviews = reviews.data;
+
+            for (let review of park.data.actualReviews) {
+                review['user'] = (await axios.get(`http://localhost:3000/getUser/${review.userId}`)).data;
+            }
+
             setPark(park.data);
         }
         getPark();
@@ -124,6 +129,10 @@ function Park() {
                                     <br />
                                     <b>{review.title}</b>
                                     <p>{review.text}</p>
+                                    <div class="userData">
+                                        <i class="username">{review.user.username}</i>
+                                        <img src={review.user.profilePicture} alt={review.user.username} class="PFP" loading="lazy"/>
+                                    </div>
                                 </div>
                             )}
                         </div>
