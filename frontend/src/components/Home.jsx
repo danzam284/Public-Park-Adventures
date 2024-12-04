@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Rating } from '@mui/material';
 
+import { SignOutButton } from "@clerk/clerk-react";
+
 function Home() {
     const { isSignedIn, user } = useUser();
     const navigate = useNavigate();
@@ -44,6 +46,9 @@ function Home() {
         <div className="header-buttons">
             <button onClick={() => navigate(`/search`)}>Search For Parks</button>
             <button onClick={() => navigate(`/location`)}>Parks Near Me</button>
+            <SignOutButton mode="modal">
+                <button>Sign Out</button>
+            </SignOutButton>
         </div>
         
         <h1 className="main-title">Public Park Adventures</h1>
