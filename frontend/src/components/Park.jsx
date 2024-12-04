@@ -96,6 +96,7 @@ function Park() {
                     <img 
                         src={park.apiData.images[imageIndex].url}
                         alt={park.apiData.fullName}
+                        loading="lazy"
                         className="gallery-image"
                     />
                 </div>
@@ -130,7 +131,7 @@ function Park() {
                                 <p>{review.text}</p>
                                 <div class="userData">
                                     <i class="username">{review.user.username}</i>
-                                    <img src={review.user.profilePicture} class="PFP"/>
+                                    <img src={review.user.profilePicture} alt={review.user.username} class="PFP" loading="lazy"/>
                                 </div>
                             </div>
                         )}
