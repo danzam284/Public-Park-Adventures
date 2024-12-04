@@ -17,11 +17,6 @@ function Park() {
             console.log(park.data);
             const reviews = await axios.get(`http://localhost:3000/getReviews/${id}`);
             park.data.actualReviews = reviews.data;
-
-            for (let review of park.data.actualReviews) {
-                review['user'] = (await axios.get(`http://localhost:3000/getUser/${review.userId}`)).data;
-            }
-
             setPark(park.data);
         }
         getPark();
@@ -48,99 +43,97 @@ function Park() {
             Back to Home
         </button>
         
-        <div className="park-details card">
-            <div className="park-header">
-                <h1>{park.apiData.fullName}</h1>
-                <p className="park-location">
-                    {park.apiData.addresses.length && 
-                        `${park.apiData.addresses[0].line1}, ${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode} ${park.apiData.addresses[0].postalCode}`}
-                </p>
+        <div className="park-outer">
+            <div className="park-details card">
+                <div className="park-header">
+                    <h1>{park.apiData.fullName}</h1>
+                    <p className="park-location">
+                        {park.apiData.addresses.length && 
+                            `${park.apiData.addresses[0].line1}, ${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode} ${park.apiData.addresses[0].postalCode}`}
+                    </p>
 
-                <p className="park-description">{park.apiData.description}</p>
-                
-                <Rating
-                    readOnly
-                    size="large"
-                    name="overall-rating"
-                    value={park.ratings.overallRating?.avg ?? 0}
-                    precision={0.1}
-                />
-            </div>
-
-            <div className="park-ratings">
-                {[
-                    { label: "Cleanliness", value: park.ratings.cleanlinessRating?.avg ?? 0 },
-                    { label: "Amenities", value: park.ratings.ammenitiesRating?.avg ?? 0 },
-                    { label: "Accessibility", value: park.ratings.accessibilityRating?.avg ?? 0 },
-                    { label: "Beauty", value: park.ratings.beautyRating?.avg ?? 0 },
-                    { label: "Nature", value: park.ratings.natureRating?.avg ?? 0 }
-                ].map(rating => (
-                    <div key={rating.label} className="rating-item">
-                    <span className="rating-label">{rating.label}</span>
+                    <p className="park-description">{park.apiData.description}</p>
+                    
                     <Rating
                         readOnly
-                        size="small"
-                        value={rating.value}
+                        size="large"
+                        name="overall-rating"
+                        value={park.ratings.overallRating?.avg ?? 0}
                         precision={0.1}
                     />
-                    </div>
-                ))}
-            </div>
+                </div>
 
-            <div className="park-gallery-container">
-                <ChevronLeftIcon
-                    className="gallery-nav prev"
-                    onClick={moveBackImage}
-                />
-                <div className="park-gallery">
-                    <img 
-                        src={park.apiData.images[imageIndex].url}
-                        alt={park.apiData.fullName}
-                        loading="lazy"
-                        className="gallery-image"
+                <div className="park-ratings">
+                    {[
+                        { label: "Cleanliness", value: park.ratings.cleanlinessRating?.avg ?? 0 },
+                        { label: "Amenities", value: park.ratings.ammenitiesRating?.avg ?? 0 },
+                        { label: "Accessibility", value: park.ratings.accessibilityRating?.avg ?? 0 },
+                        { label: "Beauty", value: park.ratings.beautyRating?.avg ?? 0 },
+                        { label: "Nature", value: park.ratings.natureRating?.avg ?? 0 }
+                    ].map(rating => (
+                        <div key={rating.label} className="rating-item">
+                        <span className="rating-label">{rating.label}</span>
+                        <Rating
+                            readOnly
+                            size="small"
+                            value={rating.value}
+                            precision={0.1}
+                        />
+                        </div>
+                    ))}
+                </div>
+
+                <div className="park-gallery-container">
+                    <ChevronLeftIcon
+                        className="gallery-nav prev"
+                        onClick={moveBackImage}
+                    />
+                    <div className="park-gallery">
+                        <img 
+                            src={park.apiData.images[imageIndex].url}
+                            alt={park.apiData.fullName}
+                            className="gallery-image"
+                        />
+                    </div>
+                    <ChevronRightIcon
+                        className="gallery-nav next"
+                        onClick={moveForwardImage}
                     />
                 </div>
-                <ChevronRightIcon
-                    className="gallery-nav next"
-                    onClick={moveForwardImage}
-                />
-            </div>
 
-            <button 
-                onClick={() => navigate("/rate", { state: park.apiData })}
-                className="review-button"
-            >
-                Write a Review
-            </button>
+                <button 
+                    onClick={() => navigate("/rate", { state: park.apiData })}
+                    className="review-button"
+                >
+                    Write a Review
+                </button>
 
-            {park.actualReviews.length > 0 ?
-                <div>
-                    <hr />
-                    <h2> Reviews </h2>
-                    <div className="reviews">
-                        {park.actualReviews.map(review =>
-                            <div className="review card">
-                                <Rating
-                                    readOnly
-                                    size="small"
-                                    value={review.ratings.overallRating}
-                                    precision={0.1}
-                                />
-                                <br />
-                                <b>{review.title}</b>
-                                <p>{review.text}</p>
-                                <div class="userData">
-                                    <i class="username">{review.user.username}</i>
-                                    <img src={review.user.profilePicture} alt={review.user.username} class="PFP" loading="lazy"/>
+                {park.actualReviews.length > 0 ?
+                    <div>
+                        <hr></hr>
+                        <h2> Reviews </h2>
+                        <div className="reviews">
+                            {park.actualReviews.map(review =>
+                                <div className="review card">
+                                    <Rating
+                                        readOnly
+                                        size="small"
+                                        value={review.ratings.overallRating}
+                                        precision={0.1}
+                                    />
+                                    <br />
+                                    <b>{review.title}</b>
+                                    <p>{review.text}</p>
                                 </div>
-                            </div>
-                        )}
-                    </div>
-                </div>:
-                <div></div>
-            }
+                            )}
+                        </div>
+                    </div>:
+                    <div></div>
+                }
 
+            </div> 
         </div>
+        
     </div>
 }
 

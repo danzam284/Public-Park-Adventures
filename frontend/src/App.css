@@ -256,6 +256,12 @@
     transform: scale(1.05);
 }
 
+.park-outer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .park-content {
     padding: 20px;
     background-color: var(--card-background);
