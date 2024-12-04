@@ -211,18 +211,28 @@
 }
 
 .parks-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    display: flex;
+    /*grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 24px;
-    padding: 20px 0;
+    padding: 20px 0;*/
+    justify-content: left;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .park-card {
+    flex: 1 1 300px !important;
     background-color: var(--card-background);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s ease-in-out;
+    min-width: 150px !important;
+    max-height: 500px !important;
+    margin-top: 10px !important;
+    margin-bottom: 0px !important;
+    margin-left: 10px !important;
+    margin-right: 0px !important;
 }
 
 .park-card:hover {
