@@ -39,6 +39,10 @@ function Park() {
         });
     }
 
+    async function deleteReview (id) {
+        await axios.get(`http://localhost:3000/deleteReview/${id}`)
+    }
+
     if (!park) {
         return "Loading...";
     }
@@ -157,6 +161,9 @@ function Park() {
                                     <br />
                                     <b>{review.title}</b>
                                     <p>{review.text}</p>
+                                    <div>
+                                        <button onClick={() => {deleteReview(review._id)}}>Delete Review</button>
+                                    </div>
                                 </span>
                             )}
                         </div>

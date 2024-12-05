@@ -159,6 +159,16 @@ app.get("/searchPark", async (req, res) => {
 });
 // rhasan1 - 10/30/2024 - Added a searchPark endpoint to search for parks by name
 
+app.get("/deleteReview/:id", async (req, res) => {
+    try {
+        const deletion = await reviewData.remove(req.params.id.trim());
+        return res.status(200).json(`deleted review with id: ${id}`)
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(`An error occured while deleting a review: ${error}`);
+    }
+})
+
 
 app.listen(3000, () => {
     console.log(`Public Park Adventures listening at http://localhost:3000`);
