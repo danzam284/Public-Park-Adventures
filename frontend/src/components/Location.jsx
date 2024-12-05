@@ -71,10 +71,12 @@ function Location() {
                         {parks.map((park) => (
                             <div key={park._id} className="park-card location-card">
                                 <div className="park-image">
-                                    <img 
-                                        src={park.apiData.images[0].url} 
-                                        alt={park.apiData.fullName}
-                                    />
+                                    <span tooltip={park.apiData.images[0].altText}>
+                                        <img
+                                            src={park.apiData.images[0].url}
+                                            alt={park.apiData.images[0].altText}
+                                        />
+                                        </span>
                                     <div className="distance-badge">
                                         {park.distance.toFixed(1)} miles
                                     </div>

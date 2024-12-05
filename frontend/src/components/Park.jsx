@@ -94,11 +94,13 @@ function Park() {
                         onClick={moveBackImage}
                     />
                     <div className="park-gallery">
-                        <img 
-                            src={park.apiData.images[imageIndex].url}
-                            alt={park.apiData.fullName}
-                            className="gallery-image"
-                        />
+                        <span tooltip={park.apiData.images[imageIndex].altText}>
+                            <img
+                                src={park.apiData.images[imageIndex].url}
+                                alt={park.apiData.images[imageIndex].altText}
+                                className="gallery-image"
+                            />
+                        </span>
                     </div>
                     <ChevronRightIcon
                         className="gallery-nav next"

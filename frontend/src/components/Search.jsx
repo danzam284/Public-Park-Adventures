@@ -108,11 +108,13 @@ function Search() {
                         <div className="parks-grid">
                             {searchResults.map((park) => (
                                 <div key={park._id} className="park-card">
-                                    <div className="park-image">
+                                    <div className="park-image" tooltip={park.apiData.images[0].altText}>
+                                        <span tooltip={park.apiData.images[0].title}>
                                         <img 
                                             src={park.apiData.images[0].url} 
-                                            alt={park.apiData.fullName}
+                                            alt={park.apiData.images[0].altText}
                                         />
+                                        </span>
                                     </div>
                                     <div className="park-content">
                                         <Rating

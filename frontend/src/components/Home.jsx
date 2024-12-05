@@ -74,7 +74,9 @@ function Home() {
                             `${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode}`}
                     </p>
                     <div className="park-image">
-                        <img src={park.apiData.images[0].url} alt={park.apiData.fullName} />
+                        <span tooltip={park.apiData.images[0].altText}>
+                            <img src={park.apiData.images[0].url} alt={park.apiData.images[0].altText} />
+                        </span>
                     </div>
                     <button onClick={() => navigate(`/park/${park.apiData.parkCode}`)}>
                         More Info
