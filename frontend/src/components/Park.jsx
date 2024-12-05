@@ -119,20 +119,43 @@ function Park() {
                         <h2> Reviews </h2>
                         <div className="reviews">
                             {park.actualReviews.map(review =>
-                                <div className="review card">
-                                    <Rating
-                                        readOnly
-                                        size="small"
-                                        value={review.ratings.overallRating}
-                                        precision={0.1}
-                                    />
+                                <span className="review card">
+                                    <span class="tooltip-wrapper">
+                                        <Rating
+                                            readOnly
+                                            size="small"
+                                            value={review.ratings.overallRating}
+                                            precision={0.1}
+                                        />
+                                        <span class="tooltip-content">
+                                            <span className="park-ratings-tooltip">
+                                                {[
+                                                    { label: "Cleanliness", value: park.ratings.cleanlinessRating?.avg ?? 0 },
+                                                    { label: "Amenities", value: park.ratings.ammenitiesRating?.avg ?? 0 },
+                                                    { label: "Accessibility", value: park.ratings.accessibilityRating?.avg ?? 0 },
+                                                    { label: "Beauty", value: park.ratings.beautyRating?.avg ?? 0 },
+                                                    { label: "Nature", value: park.ratings.natureRating?.avg ?? 0 }
+                                                ].map(rating => (
+                                                    <span key={rating.label} className="rating-item">
+                                                        <span className="rating-label">{rating.label}</span>
+                                                        <Rating
+                                                            readOnly
+                                                            size="small"
+                                                            value={rating.value}
+                                                            precision={0.1}
+                                                        />
+                                                    </span>
+                                            ))}
+                                            </span>
+                                        </span>
+                                    </span>
                                     <span tooltip={review.user.username}>
                                         <img src={review.user.profilePicture} alt={review.user.username}  class="PFP" loading="lazy"/>
                                     </span>
                                     <br />
                                     <b>{review.title}</b>
                                     <p>{review.text}</p>
-                                </div>
+                                </span>
                             )}
                         </div>
                     </div>:
