@@ -132,11 +132,11 @@ function Park() {
                                         <span class="tooltip-content">
                                             <span className="park-ratings-tooltip">
                                                 {[
-                                                    { label: "Cleanliness", value: park.ratings.cleanlinessRating?.avg ?? 0 },
-                                                    { label: "Amenities", value: park.ratings.ammenitiesRating?.avg ?? 0 },
-                                                    { label: "Accessibility", value: park.ratings.accessibilityRating?.avg ?? 0 },
-                                                    { label: "Beauty", value: park.ratings.beautyRating?.avg ?? 0 },
-                                                    { label: "Nature", value: park.ratings.natureRating?.avg ?? 0 }
+                                                    { label: "Cleanliness", value: review.ratings.cleanlinessRating },
+                                                    { label: "Amenities", value: review.ratings.ammenitiesRating},
+                                                    { label: "Accessibility", value: review.ratings.accessibilityRating},
+                                                    { label: "Beauty", value: review.ratings.beautyRating},
+                                                    { label: "Nature", value: review.ratings.natureRating}
                                                 ].map(rating => (
                                                     <span key={rating.label} className="rating-item">
                                                         <span className="rating-label">{rating.label}</span>
