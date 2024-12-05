@@ -161,7 +161,8 @@ app.get("/searchPark", async (req, res) => {
 
 app.get("/deleteReview/:id", async (req, res) => {
     try {
-        const deletion = await reviewData.remove(req.params.id.trim());
+        const id = req.params.id.trim();
+        const deletion = await reviewData.remove(id);
         return res.status(200).json(`deleted review with id: ${id}`)
     } catch (error) {
         console.log(error);

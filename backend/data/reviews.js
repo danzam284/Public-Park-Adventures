@@ -79,7 +79,7 @@ const remove = async (id) => {
     const reviewCollection = await reviews();
 
     const reviewDeletionInfo = await reviewCollection.findOneAndDelete({
-        _id: id,
+        _id: new ObjectId(id),
     });
 
     if (!reviewDeletionInfo)
