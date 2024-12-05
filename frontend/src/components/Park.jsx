@@ -126,13 +126,12 @@ function Park() {
                                         value={review.ratings.overallRating}
                                         precision={0.1}
                                     />
+                                    <span tooltip={review.user.username}>
+                                        <img src={review.user.profilePicture} alt={review.user.username}  class="PFP" loading="lazy"/>
+                                    </span>
                                     <br />
                                     <b>{review.title}</b>
                                     <p>{review.text}</p>
-                                    <div class="userData">
-                                        <i class="username">{review.user.username}</i>
-                                        <img src={review.user.profilePicture} alt={review.user.username} class="PFP" loading="lazy"/>
-                                    </div>
                                 </div>
                             )}
                         </div>

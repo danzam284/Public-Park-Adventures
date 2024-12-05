@@ -50,7 +50,9 @@ function Home() {
             <SignOutButton mode="modal">
                 <button>Sign Out</button>
             </SignOutButton>
-            <img src={user.imageUrl} alt={user.username} class="PFP_HOME" loading="lazy"/>
+            <span tooltip={user.username}>
+                <img src={user.imageUrl} alt={user.username} tooltip={user.username} class="PFP_HOME" loading="lazy"/>
+            </span>
         </div>
         
         <h1 className="main-title">Public Park Adventures</h1>
