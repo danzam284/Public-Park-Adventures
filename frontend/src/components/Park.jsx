@@ -40,7 +40,13 @@ function Park() {
     }
 
     async function deleteReview (id) {
-        await axios.get(`http://localhost:3000/deleteReview/${id}`)
+        await axios.get(`http://localhost:3000/deleteReview/${id}`);
+
+        //filter out deleted park, no need for hard reload of page
+        setPark((prevPark) => ({
+            ...prevPark,
+            actualReviews: prevPark.actualReviews.filter((review) => review._id !== id),
+        }));
     }
 
     if (!park) {
@@ -125,15 +131,15 @@ function Park() {
                         <h2> Reviews </h2>
                         <div className="reviews">
                             {park.actualReviews.map(review =>
-                                <span className="review card">
-                                    <span class="tooltip-wrapper">
+                                <span className="review card" key = {review._id}>
+                                    <span className="tooltip-wrapper">
                                         <Rating
                                             readOnly
                                             size="small"
                                             value={review.ratings.overallRating}
                                             precision={0.1}
                                         />
-                                        <span class="tooltip-content">
+                                        <span className="tooltip-content">
                                             <span className="park-ratings-tooltip">
                                                 {[
                                                     { label: "Cleanliness", value: review.ratings.cleanlinessRating },
@@ -156,7 +162,7 @@ function Park() {
                                         </span>
                                     </span>
                                     <span tooltip={review.user.username}>
-                                        <img src={review.user.profilePicture} alt={review.user.username}  class="PFP" loading="lazy"/>
+                                        <img src={review.user.profilePicture} alt={review.user.username}  className="PFP" loading="lazy"/>
                                     </span>
                                     <br />
                                     <b>{review.title}</b>
