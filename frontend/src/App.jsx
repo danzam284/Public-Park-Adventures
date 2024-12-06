@@ -8,6 +8,7 @@ import Rate from './components/Rate.jsx';
 import Park from './components/Park.jsx';
 import Search from './components/Search.jsx';
 import Location from './components/Location.jsx';
+import Profile from './components/Profile.jsx';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path='/rate' element={<Rate/>} />
           <Route path='/search' element={<Search/>} />
           <Route path='/location' element={<Location/>} />
+          <Route path='/profile' element={<Profile/>} />
           <Route path="/sign-in/*" element={<SignIn />} />
           <Route path="/sign-up/*" element={<SignUp />} />
         </Routes>

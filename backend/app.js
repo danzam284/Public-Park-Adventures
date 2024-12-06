@@ -126,6 +126,16 @@ app.get("/getReviews/:id", async (req, res) => {
     }
 });
 
+app.get("/getReviewsByUser/:id", async (req, res) => {
+    try {
+        const reviews = await parkData.getReviewsByUser(req.params.id.trim());
+        res.status(200).json(reviews);
+    } catch(e) {
+        console.log(e);
+        return res.status(400).send(e);
+    }
+})
+
 app.get("/getTopParks", async (_, res) => {
     try {
         const topParks = await parkData.getTopParks();

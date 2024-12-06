@@ -83,6 +83,21 @@ const getReviews = async(id) => {
     return reviews;
 }
 
+const getReviewsByUser = async(id) => {
+    validation.checkNull(id);
+    const reviews = [];
+
+    const user = await userData.getByID(id);
+    for (let i = 0; i < user.reviews.length; i++) {
+        try {
+            const review = await reviewData.getByID(user.reviews[i]);
+            reviews.push(review);
+        } catch(e) {
+            console.log(e);
+        }
+    }
+    return reviews;
+}
 
 const getTopParks = async() => {
     const parks = await getParks();
@@ -207,6 +222,7 @@ export default {
     updateReview,
     getParks,
     getReviews,
+    getReviewsByUser,
     getTopParks,
     getSortedParksByCategory,
     getCloseParks,

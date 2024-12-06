@@ -47,11 +47,12 @@ function Home() {
         <div className="header-buttons">
             <button onClick={() => navigate(`/search`)}>Search For Parks</button>
             <button onClick={() => navigate(`/location`)}>Parks Near Me</button>
+            <button onClick={() => navigate(`/profile`)}>Profile</button>
             <SignOutButton mode="modal">
                 <button>Sign Out</button>
             </SignOutButton>
             <span tooltip={user.username}>
-                <img src={user.imageUrl} alt={user.username} tooltip={user.username} class="PFP_HOME" loading="lazy"/>
+                <img src={user.imageUrl} alt={user.username} tooltip={user.username} className="PFP_HOME" loading="lazy"/>
             </span>
         </div>
         
