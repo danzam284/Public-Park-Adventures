@@ -169,7 +169,7 @@ const removeReview = async (parkId, reviewId) => {
     }
 
     let review = await reviewData.getByID(reviewId);
-    let ratings = await getByID(parkId).ratings;
+    let ratings = (await getByID(parkId)).ratings;
     for (let reviewRating in review.ratings) {
         if (ratings[reviewRating].count > 1) {
             let total = ratings[reviewRating].count * ratings[reviewRating].avg - review.ratings[reviewRating];
