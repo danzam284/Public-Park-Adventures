@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
+import { useUser } from "@clerk/clerk-react";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Rating from '@mui/material/Rating';
@@ -10,6 +11,7 @@ function Park() {
     const [park, setPark] = useState(null);
     const [imageIndex, setImageIndex] = useState(0);
     const navigate = useNavigate();
+    const { isSignedIn, user } = useUser();
 
     useEffect(() => {
         async function getPark() {
@@ -17,6 +19,7 @@ function Park() {
             console.log(park.data);
             const reviews = await axios.get(`http://localhost:3000/getReviews/${id}`);
             park.data.actualReviews = reviews.data;
+            console.log(reviews.data);
 
             for (let review of park.data.actualReviews) {
                 review['user'] = (await axios.get(`http://localhost:3000/getUser/${review.userId}`)).data;
@@ -49,7 +52,7 @@ function Park() {
         }));
     }
 
-    if (!park) {
+    if (!park || !isSignedIn) {
         return "Loading...";
     }
 
@@ -167,9 +170,9 @@ function Park() {
                                     <br />
                                     <b>{review.title}</b>
                                     <p>{review.text}</p>
-                                    <div>
+                                    {user.id === review.userId && <div>
                                         <button onClick={() => {deleteReview(review._id)}}>Delete Review</button>
-                                    </div>
+                                    </div>}
                                 </span>
                             )}
                         </div>
