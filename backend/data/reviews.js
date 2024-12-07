@@ -25,10 +25,20 @@ const create = async (
         text = validation.checkString(text, "Review Text");
 
     let foundUser = await userData.getByID(userId);
+    console.log(foundUser.reviews);
+ 
+    for (let i = 0; i < foundUser.reviews.length; i++) {
+        let review;
+        try {
+            review = await getByID(foundUser.reviews[i]);
+        } catch(_) {
+            review = {parkId: undefined};
+        }
 
-    for (let review of foundUser.reviews)
-        if (review.parkId === parkId)
+        if (review.parkId === parkId) {
             throw "This park has already been reviewed by this user, please edit it instead.";
+        }
+    }
 
     if (typeof ratings !== 'object')
         throw "Ratings must be an object with category keys and numerical integer values between 0 and 5";

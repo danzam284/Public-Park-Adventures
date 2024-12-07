@@ -77,7 +77,7 @@ const getReviews = async(id) => {
             const review = await reviewData.getByID(park.reviews[i]);
             reviews.push(review);
         } catch(e) {
-            console.log(e);
+            //pass
         }
     }
     return reviews;
@@ -93,7 +93,7 @@ const getReviewsByUser = async(id) => {
             const review = await reviewData.getByID(user.reviews[i]);
             reviews.push(review);
         } catch(e) {
-            console.log(e);
+            //pass
         }
     }
     return reviews;

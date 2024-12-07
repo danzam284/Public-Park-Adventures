@@ -28,7 +28,7 @@ function Profile() {
         await axios.get(`http://localhost:3000/deleteReview/${id}`);
 
         setReviews((prevReviews) =>
-            prevReviews.filter((review) => review.id !== id)
+            prevReviews.filter((review) => review._id !== id)
         );
     }
 
@@ -97,7 +97,7 @@ function Profile() {
                             )}
                         </div>
                     </div>:
-                    <div></div>
+                    <div>You have not made any reviews.</div>
                 }
 
             </div> 

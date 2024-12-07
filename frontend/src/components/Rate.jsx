@@ -64,7 +64,7 @@ function Rate() {
             await axios.post("http://localhost:3000/newReview", formData);
             navigate(`/park/${park.parkCode}`);
         } catch(e) {
-            setError(e.response?.data?.message || "An error occurred while submitting the review");
+            setError(e.response?.data || "An error occurred while submitting the review");
             console.error(e);
         }
     }
