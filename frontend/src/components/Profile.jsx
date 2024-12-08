@@ -45,8 +45,8 @@ function Profile() {
             <div className="park-details card">
                 <div className="park-header" style={{display: "flex", justifyContent: "center", alignItems: "center", gap: "15px"}}>
                     <h1>{user.username}</h1>
-                    <span tooltip={user.username}>
-                        <img src={user.imageUrl} alt={user.username} tooltip={user.username} className="PFP_HOME" loading="lazy"/>
+                    <span title={user.username}>
+                        <img src={user.imageUrl} alt={user.username} className="PFP_HOME" loading="lazy"/>
                     </span>
                 </div>
 

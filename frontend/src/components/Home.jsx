@@ -47,11 +47,12 @@ function Home() {
             <button onClick={() => navigate(`/search`)}>Search For Parks</button>
             <button onClick={() => navigate(`/location`)}>Parks Near Me</button>
             <button onClick={() => navigate(`/profile`)}>Profile</button>
-            <SignOutButton mode="modal">
+            <SignOutButton>
                 <button>Sign Out</button>
             </SignOutButton>
-            <span tooltip={user.username}>
-                <img src={user.imageUrl} alt={user.username} tooltip={user.username} className="PFP_HOME" loading="lazy"/>
+            
+            <span title={user.username}>
+                <img src={user.imageUrl} alt={user.username} className="PFP_HOME" loading="lazy"/>
             </span>
         </div>
         
@@ -74,7 +75,7 @@ function Home() {
                             `${park.apiData.addresses[0].city}, ${park.apiData.addresses[0].stateCode}`}
                     </p>
                     <div className="park-image">
-                        <span tooltip={park.apiData.images[0].altText}>
+                        <span title={park.apiData.images[0].altText}>
                             <img src={park.apiData.images[0].url} alt={park.apiData.images[0].altText} />
                         </span>
                     </div>

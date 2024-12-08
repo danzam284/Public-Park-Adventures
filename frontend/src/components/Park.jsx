@@ -107,7 +107,7 @@ function Park() {
                         onClick={moveBackImage}
                     />
                     <div className="park-gallery">
-                        <span tooltip={park.apiData.images[imageIndex].altText}>
+                        <span title={park.apiData.images[imageIndex].altText}>
                             <img
                                 src={park.apiData.images[imageIndex].url}
                                 alt={park.apiData.images[imageIndex].altText}
@@ -164,7 +164,7 @@ function Park() {
                                             </span>
                                         </span>
                                     </span>
-                                    <span tooltip={review.user.username}>
+                                    <span title={review.user.username}>
                                         <img src={review.user.profilePicture} alt={review.user.username}  className="PFP" loading="lazy"/>
                                     </span>
                                     <br />

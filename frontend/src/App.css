@@ -683,7 +683,6 @@
 }
 
 .username {
-  float: center;
   display: inline;
   padding: 10px;
   font-size:20px;
@@ -692,7 +691,6 @@
 .PFP {
   width: 25px;
   height: 25px;
-  float: center;
   display: inline;
   margin-left: 10px;
   border-radius: 50%;
@@ -702,20 +700,19 @@
 .PFP_HOME {
   width: 40px;
   height: 40px;
-  float: center;
   display: inline;
   border-radius: 50%;
 }
 
-/* Tooltip container */
-[tooltip] {
+/* title container */
+[title] {
   position: relative;
   cursor: pointer;
 }
 
-/* Tooltip text styling */
-[tooltip]::after {
-  content: attr(tooltip);
+/* title text styling */
+[title]::after {
+  content: attr(title);
   position: absolute;
   bottom: 125%; /* Adjust for positioning */
   left: 50%;
@@ -736,13 +733,13 @@
   transition: opacity 0.2s ease-in-out;
 }
 
-/* Show tooltip on hover */
-[tooltip]:hover::after {
+/* Show title on hover */
+[title]:hover::after {
   visibility: visible;
   opacity: 1;
 }
 
-/* Tooltip container */
+/* title container */
 .tooltip-wrapper {
   position: relative;
   display: inline-block;
